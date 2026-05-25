@@ -1,0 +1,113 @@
+services:
+  # ============================================
+  # BASE DE DATOS MYSQL
+  # ============================================
+  mysql_db:
+    image: mysql:8.0
+    container_name: quickorder_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init-db:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # ============================================
+  # MICROSERVICIO DE PEDIDOS
+  # ============================================
+  ms-pedidos:
+    build:
+      context: ./ms-pedidos
+      dockerfile: Dockerfile
+    container_name: ms-pedidos
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/db_pedidos?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+
+  # ============================================
+  # MICROSERVICIO DE CLIENTES
+  # ============================================
+  ms-clientes:
+    build:
+      context: ./ms-clientes
+      dockerfile: Dockerfile
+    container_name: ms-clientes
+    ports:
+      - "8082:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/db_clientes?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+
+  # ============================================
+  # MICROSERVICIO DE INVENTARIO
+  # ============================================
+  ms-inventario:
+    build:
+      context: ./ms-inventario
+      dockerfile: Dockerfile
+    container_name: ms-inventario
+    ports:
+      - "8083:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/db_inventario?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+
+  # ============================================
+  # MICROSERVICIO DE PAGOS
+  # ============================================
+  ms-pagos:
+    build:
+      context: ./ms-pagos
+      dockerfile: Dockerfile
+    container_name: ms-pagos
+    ports:
+      - "8084:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/db_pagos?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+
+  # ============================================
+  # MICROSERVICIO DE NOTIFICACIONES
+  # ============================================
+  ms-notificaciones:
+    build:
+      context: ./ms-notificaciones
+      dockerfile: Dockerfile
+    container_name: ms-notificaciones
+    ports:
+      - "8085:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/db_notificaciones?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
