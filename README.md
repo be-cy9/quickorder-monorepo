@@ -1,42 +1,25 @@
-# QuickOrder - Arquitectura de Microservicios
+# QuickOrder - 10 Microservicios
 
 ## Integrantes
-- Benjamín [Tu Apellido]
-- [Nombre Compañero 1]
-- [Nombre Compañero 2]
+- Benjamín Almonacid
 
-## Descripción del Proyecto
-QuickOrder es una plataforma de gestión de pedidos basada en microservicios que permite:
-- Gestión de pedidos, clientes, inventario, pagos
-- Facturación, envíos, soporte al cliente
-- Reportes y seguridad
+## Tecnologías
+- Java 17, Spring Boot 3.2.0, MySQL, Docker, Maven
 
-## Tecnologías Utilizadas
-- Java 17
-- Spring Boot 3.2.0
-- Spring Data JPA
-- MySQL 8.0
-- Docker / Docker Compose
-- Maven
-- Flyway (Migraciones)
+## Cómo ejecutar
+1. `docker-compose up -d mysql_db`
+2. `cd ms-pedidos && mvn spring-boot:run`
 
-## Requisitos Previos
-- Docker Desktop instalado y ejecutándose
-- Java 17
-- Maven
-- Postman (para pruebas)
-
-## Estructura del Proyecto
-quickorder-monorepo/
-├── ms-pedidos/ (Puerto 8081)
-├── ms-clientes/ (Puerto 8082)
-├── ms-inventario/ (Puerto 8083)
-├── ms-pagos/ (Puerto 8084)
-├── ms-notificaciones/ (Puerto 8086)
-├── ms-facturacion/ (Puerto 8087)
-├── ms-envios/ (Puerto 8088)
-├── ms-soporte/ (Puerto 8089)
-├── ms-reportes/ (Puerto 8090)
-├── ms-seguridad/ (Puerto 8091)
-└── init-db/ (Scripts SQL)
-
+## Microservicios y puertos
+| Microservicio | Puerto |
+|---------------|--------|
+| ms-pedidos | 8081 |
+| ms-clientes | 8082 |
+| ms-inventario | 8083 |
+| ms-pagos | 8084 |
+| ms-notificaciones | 8086 |
+| ms-facturacion | 8087 |
+| ms-envios | 8088 |
+| ms-soporte | 8089 |
+| ms-reportes | 8090 |
+| ms-seguridad | 8091 |
