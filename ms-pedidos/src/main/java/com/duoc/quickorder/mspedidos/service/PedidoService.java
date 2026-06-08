@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PedidoService {
@@ -26,11 +25,14 @@ public class PedidoService {
     }
 
     public List<Pedido> obtenerTodos() {
+        log.info("Listando todos los pedidos");
         return pedidoRepository.findAll();
     }
 
-    public Optional<Pedido> obtenerPorId(Long id) {
-        return pedidoRepository.findById(id);
+    public Pedido obtenerPorId(Long id) {
+        log.info("Buscando pedido con ID: {}", id);
+        return pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + id));
     }
 
     public Pedido guardarPedido(Pedido pedido) {
@@ -47,22 +49,24 @@ public class PedidoService {
         return pedidoRepository.save(pedido);
     }
 
-    public Optional<Pedido> actualizarPedido(Long id, Pedido pedidoActualizado) {
-        return pedidoRepository.findById(id).map(pedidoExistente -> {
-            pedidoExistente.setClienteId(pedidoActualizado.getClienteId());
-            pedidoExistente.setDescripcion(pedidoActualizado.getDescripcion());
-            pedidoExistente.setMonto(pedidoActualizado.getMonto());
-            pedidoExistente.setEstado(pedidoActualizado.getEstado());
-            return pedidoRepository.save(pedidoExistente);
-        });
+    public Pedido actualizarPedido(Long id, Pedido pedidoActualizado) {
+        log.info("Actualizando pedido con ID: {}", id);
+        Pedido pedidoExistente = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + id));
+
+        pedidoExistente.setClienteId(pedidoActualizado.getClienteId());
+        pedidoExistente.setDescripcion(pedidoActualizado.getDescripcion());
+        pedidoExistente.setMonto(pedidoActualizado.getMonto());
+        pedidoExistente.setEstado(pedidoActualizado.getEstado());
+        return pedidoRepository.save(pedidoExistente);
     }
 
-    public boolean eliminarPedido(Long id) {
-        if (pedidoRepository.existsById(id)) {
-            pedidoRepository.deleteById(id);
-            return true;
+    public void eliminarPedido(Long id) {
+        log.info("Eliminando pedido con ID: {}", id);
+        if (!pedidoRepository.existsById(id)) {
+            throw new RuntimeException("Pedido no encontrado con ID: " + id);
         }
-        return false;
+        pedidoRepository.deleteById(id);
     }
 
     public RespuestaCombinadaDTO obtenerPedidosConCliente(Long clienteId) {

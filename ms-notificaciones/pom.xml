@@ -14,9 +14,9 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     
-    <artifactId>ms-clientes</artifactId>  <!-- ← CAMBIA para cada microservicio -->
-    <name>ms-clientes</name>
-    <description>Microservicio de Gestión de Clientes</description>
+    <artifactId>ms-notificaciones</artifactId>
+    <name>ms-notificaciones</name>
+    <description>Microservicio de Gestión de Notificaciones</description>
     
     <dependencies>
         <!-- Spring Web -->
