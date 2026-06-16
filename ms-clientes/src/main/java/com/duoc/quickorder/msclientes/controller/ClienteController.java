@@ -47,7 +47,7 @@ public class ClienteController {
                     cliente.setNombre(clienteActualizado.getNombre());
                     cliente.setEmail(clienteActualizado.getEmail());
                     cliente.setTelefono(clienteActualizado.getTelefono());
-                    cliente.setDireccion(clienteActualizado.getDireccion());
+                    cliente.setPais(clienteActualizado.getPais());
                     return ResponseEntity.ok(clienteRepository.save(cliente));
                 })
                 .orElse(ResponseEntity.notFound().build());

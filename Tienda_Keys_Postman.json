@@ -1,0 +1,199 @@
+{
+  "info": {
+    "name": "QuickOrder - Game Keys Store",
+    "description": "Colección actualizada para la tienda de Eneba (Keys de Juegos)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Inventario (Keys)",
+      "item": [
+        {
+          "name": "Listar Todo el Inventario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/api/productos",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8083",
+              "path": [
+                "api",
+                "productos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar por Plataforma (Steam)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/api/productos/plataforma/Steam",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8083",
+              "path": [
+                "api",
+                "productos",
+                "plataforma",
+                "Steam"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Añadir Key (Steam)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Elden Ring\",\n  \"descripcion\": \"Código de activación de Elden Ring\",\n  \"precio\": 45000.0,\n  \"stock\": 5,\n  \"plataforma\": \"Steam\",\n  \"region\": \"Global\",\n  \"codigoKey\": \"ELDN-RING-9999-STEA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8083/api/productos",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8083",
+              "path": [
+                "api",
+                "productos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Añadir Key (Xbox)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Halo Infinite\",\n  \"descripcion\": \"Game Pass No Requerido\",\n  \"precio\": 35000.0,\n  \"stock\": 10,\n  \"plataforma\": \"Xbox\",\n  \"region\": \"USA\",\n  \"codigoKey\": \"XBOX-HALO-INFI-NITE\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8083/api/productos",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8083",
+              "path": [
+                "api",
+                "productos"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Clientes",
+      "item": [
+        {
+          "name": "Listar Clientes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/clientes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "api",
+                "clientes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Registrar Comprador",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Gamer Pro 123\",\n  \"email\": \"gamer@pro.com\",\n  \"telefono\": \"+56987654321\",\n  \"pais\": \"Chile\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8082/api/clientes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "api",
+                "clientes"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Pedidos",
+      "item": [
+        {
+          "name": "Comprar Key",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": 1,\n  \"productoId\": 1,\n  \"descripcion\": \"Compra de Elden Ring Steam Key\",\n  \"monto\": 45000.0,\n  \"estado\": \"CREADO\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/pedidos",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "pedidos"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

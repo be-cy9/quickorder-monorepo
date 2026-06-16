@@ -20,7 +20,7 @@ services:
       retries: 10
 
   # ============================================
-  # MICROSERVICIO DE PEDIDOS
+  # MICROSERVICIOS
   # ============================================
   ms-pedidos:
     build:
@@ -30,6 +30,7 @@ services:
     ports:
       - "8081:8080"
     environment:
+      - SERVER_PORT=8080
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/db_pedidos?useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
@@ -37,9 +38,6 @@ services:
       mysql_db:
         condition: service_healthy
 
-  # ============================================
-  # MICROSERVICIO DE CLIENTES
-  # ============================================
   ms-clientes:
     build:
       context: ./ms-clientes
@@ -48,6 +46,7 @@ services:
     ports:
       - "8082:8080"
     environment:
+      - SERVER_PORT=8080
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/db_clientes?useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
@@ -55,9 +54,6 @@ services:
       mysql_db:
         condition: service_healthy
 
-  # ============================================
-  # MICROSERVICIO DE INVENTARIO
-  # ============================================
   ms-inventario:
     build:
       context: ./ms-inventario
@@ -66,6 +62,7 @@ services:
     ports:
       - "8083:8080"
     environment:
+      - SERVER_PORT=8080
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/db_inventario?useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
@@ -73,9 +70,6 @@ services:
       mysql_db:
         condition: service_healthy
 
-  # ============================================
-  # MICROSERVICIO DE PAGOS
-  # ============================================
   ms-pagos:
     build:
       context: ./ms-pagos
@@ -84,6 +78,7 @@ services:
     ports:
       - "8084:8080"
     environment:
+      - SERVER_PORT=8080
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/db_pagos?useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
@@ -91,18 +86,96 @@ services:
       mysql_db:
         condition: service_healthy
 
-  # ============================================
-  # MICROSERVICIO DE NOTIFICACIONES
-  # ============================================
   ms-notificaciones:
     build:
       context: ./ms-notificaciones
       dockerfile: Dockerfile
     container_name: ms-notificaciones
     ports:
-      - "8085:8080"
+      - "8086:8080"
     environment:
+      - SERVER_PORT=8080
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/db_notificaciones?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+
+  ms-facturacion:
+    build:
+      context: ./ms-facturacion
+      dockerfile: Dockerfile
+    container_name: ms-facturacion
+    ports:
+      - "8087:8080"
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/db_facturacion?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+
+  ms-envios:
+    build:
+      context: ./ms-envios
+      dockerfile: Dockerfile
+    container_name: ms-envios
+    ports:
+      - "8088:8080"
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/db_envios?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+
+  ms-soporte:
+    build:
+      context: ./ms-soporte
+      dockerfile: Dockerfile
+    container_name: ms-soporte
+    ports:
+      - "8089:8080"
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/db_soporte?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+
+  ms-reportes:
+    build:
+      context: ./ms-reportes
+      dockerfile: Dockerfile
+    container_name: ms-reportes
+    ports:
+      - "8090:8080"
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/db_reportes?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+
+  ms-seguridad:
+    build:
+      context: ./ms-seguridad
+      dockerfile: Dockerfile
+    container_name: ms-seguridad
+    ports:
+      - "8091:8080"
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/db_seguridad?useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
     depends_on:

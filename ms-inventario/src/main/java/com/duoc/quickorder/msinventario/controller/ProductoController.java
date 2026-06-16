@@ -43,7 +43,9 @@ public class ProductoController {
                     producto.setDescripcion(productoActualizado.getDescripcion());
                     producto.setPrecio(productoActualizado.getPrecio());
                     producto.setStock(productoActualizado.getStock());
-                    producto.setCategoria(productoActualizado.getCategoria());
+                    producto.setPlataforma(productoActualizado.getPlataforma());
+                    producto.setRegion(productoActualizado.getRegion());
+                    producto.setCodigoKey(productoActualizado.getCodigoKey());
                     return ResponseEntity.ok(productoRepository.save(producto));
                 })
                 .orElse(ResponseEntity.notFound().build());
@@ -58,9 +60,9 @@ public class ProductoController {
         return ResponseEntity.notFound().build();
     }
     
-    @GetMapping("/categoria/{categoria}")
-    public List<Producto> getProductosByCategoria(@PathVariable String categoria) {
-        return productoRepository.findByCategoria(categoria);
+    @GetMapping("/plataforma/{plataforma}")
+    public List<Producto> getProductosByPlataforma(@PathVariable String plataforma) {
+        return productoRepository.findByPlataforma(plataforma);
     }
     
     @GetMapping("/stock/bajo/{limite}")

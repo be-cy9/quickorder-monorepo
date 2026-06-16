@@ -17,6 +17,10 @@ public class Pedido {
     @Column(name = "cliente_id", nullable = false)
     private Long clienteId;
     
+    @NotNull(message = "El ID del producto (Key) es obligatorio")
+    @Column(name = "producto_id", nullable = false)
+    private Long productoId;
+    
     @NotBlank(message = "La descripción es obligatoria")
     @Size(max = 500, message = "La descripción no puede superar 500 caracteres")
     private String descripcion;
@@ -33,8 +37,9 @@ public class Pedido {
     
     public Pedido() {}
     
-    public Pedido(Long clienteId, String descripcion, BigDecimal monto, String estado) {
+    public Pedido(Long clienteId, Long productoId, String descripcion, BigDecimal monto, String estado) {
         this.clienteId = clienteId;
+        this.productoId = productoId;
         this.descripcion = descripcion;
         this.monto = monto;
         this.estado = estado;
@@ -46,6 +51,9 @@ public class Pedido {
     
     public Long getClienteId() { return clienteId; }
     public void setClienteId(Long clienteId) { this.clienteId = clienteId; }
+    
+    public Long getProductoId() { return productoId; }
+    public void setProductoId(Long productoId) { this.productoId = productoId; }
     
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }

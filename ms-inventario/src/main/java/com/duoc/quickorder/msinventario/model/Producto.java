@@ -27,19 +27,26 @@ public class Producto {
     @Min(value = 0, message = "El stock no puede ser negativo")
     private Integer stock;
     
-    private String categoria;
+    private String plataforma;
+    
+    private String region;
+    
+    @Column(name = "codigo_key")
+    private String codigoKey;
     
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
     
     public Producto() {}
     
-    public Producto(String nombre, String descripcion, Double precio, Integer stock, String categoria) {
+    public Producto(String nombre, String descripcion, Double precio, Integer stock, String plataforma, String region, String codigoKey) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
         this.stock = stock;
-        this.categoria = categoria;
+        this.plataforma = plataforma;
+        this.region = region;
+        this.codigoKey = codigoKey;
         this.fechaCreacion = LocalDateTime.now();
     }
     
@@ -59,8 +66,14 @@ public class Producto {
     public Integer getStock() { return stock; }
     public void setStock(Integer stock) { this.stock = stock; }
     
-    public String getCategoria() { return categoria; }
-    public void setCategoria(String categoria) { this.categoria = categoria; }
+    public String getPlataforma() { return plataforma; }
+    public void setPlataforma(String plataforma) { this.plataforma = plataforma; }
+    
+    public String getRegion() { return region; }
+    public void setRegion(String region) { this.region = region; }
+    
+    public String getCodigoKey() { return codigoKey; }
+    public void setCodigoKey(String codigoKey) { this.codigoKey = codigoKey; }
     
     public LocalDateTime getFechaCreacion() { return fechaCreacion; }
     public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }

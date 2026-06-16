@@ -39,7 +39,7 @@ public class EnvioController {
         return envioRepository.findById(id)
                 .map(envio -> {
                     envio.setPedidoId(envioActualizado.getPedidoId());
-                    envio.setDireccion(envioActualizado.getDireccion());
+                    envio.setEmailDestino(envioActualizado.getEmailDestino());
                     envio.setEstado(envioActualizado.getEstado());
                     return ResponseEntity.ok(envioRepository.save(envio));
                 })

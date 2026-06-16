@@ -24,18 +24,19 @@ public class Cliente {
     @Pattern(regexp = "^[0-9+]{8,15}$", message = "El teléfono debe tener entre 8 y 15 dígitos")
     private String telefono;
     
-    private String direccion;
+    @NotBlank(message = "El país es obligatorio")
+    private String pais;
     
     @Column(name = "fecha_registro")
     private LocalDateTime fechaRegistro;
     
     public Cliente() {}
     
-    public Cliente(String nombre, String email, String telefono, String direccion) {
+    public Cliente(String nombre, String email, String telefono, String pais) {
         this.nombre = nombre;
         this.email = email;
         this.telefono = telefono;
-        this.direccion = direccion;
+        this.pais = pais;
         this.fechaRegistro = LocalDateTime.now();
     }
     
@@ -52,8 +53,8 @@ public class Cliente {
     public String getTelefono() { return telefono; }
     public void setTelefono(String telefono) { this.telefono = telefono; }
     
-    public String getDireccion() { return direccion; }
-    public void setDireccion(String direccion) { this.direccion = direccion; }
+    public String getPais() { return pais; }
+    public void setPais(String pais) { this.pais = pais; }
     
     public LocalDateTime getFechaRegistro() { return fechaRegistro; }
     public void setFechaRegistro(LocalDateTime fechaRegistro) { this.fechaRegistro = fechaRegistro; }
