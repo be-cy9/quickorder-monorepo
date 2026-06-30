@@ -1,7 +1,14 @@
 package com.duoc.quickorder.msenvios.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Email;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,9 +23,11 @@ public class Envio {
     private Long pedidoId;
     
     @NotBlank(message = "El email de destino es obligatorio")
+    @Email(message = "El email de destino debe ser un correo válido")
     @Column(name = "email_destino")
     private String emailDestino;
     
+    @NotBlank(message = "El estado es obligatorio")
     private String estado;
     
     @Column(name = "fecha_envio")

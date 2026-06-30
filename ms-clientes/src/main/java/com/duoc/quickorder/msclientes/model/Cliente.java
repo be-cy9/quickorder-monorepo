@@ -1,7 +1,15 @@
 package com.duoc.quickorder.msclientes.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,6 +29,7 @@ public class Cliente {
     @Column(unique = true)
     private String email;
     
+    @NotBlank(message = "El teléfono es obligatorio")
     @Pattern(regexp = "^[0-9+]{8,15}$", message = "El teléfono debe tener entre 8 y 15 dígitos")
     private String telefono;
     

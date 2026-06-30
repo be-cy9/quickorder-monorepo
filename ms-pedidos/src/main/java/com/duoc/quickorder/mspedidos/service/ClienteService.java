@@ -3,7 +3,6 @@ package com.duoc.quickorder.mspedidos.service;
 import com.duoc.quickorder.mspedidos.dto.ClienteDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -13,8 +12,12 @@ public class ClienteService {
     
     private static final Logger log = LoggerFactory.getLogger(ClienteService.class);
     
-    @Autowired
-    private WebClient webClient;
+    private final WebClient webClient;
+
+    public ClienteService(WebClient webClient) {
+        this.webClient = webClient;
+    }
+
     
     // Este método llama a ms-clientes para obtener los datos de un cliente por su ID
     public ClienteDTO obtenerClientePorId(Long clienteId) {

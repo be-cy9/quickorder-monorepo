@@ -1,7 +1,14 @@
 package com.duoc.quickorder.mssoporte.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
@@ -22,6 +29,7 @@ public class Ticket {
     @Size(max = 1000, message = "La descripción no puede superar 1000 caracteres")
     private String descripcion;
     
+    @NotBlank(message = "El estado es obligatorio")
     private String estado;
     
     @Column(name = "fecha_creacion")

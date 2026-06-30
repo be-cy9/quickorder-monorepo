@@ -1,7 +1,14 @@
 package com.duoc.quickorder.msfacturacion.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
 
@@ -23,6 +30,7 @@ public class Factura {
     @Positive(message = "El monto debe ser positivo")
     private BigDecimal monto;
     
+    @NotBlank(message = "El estado es obligatorio")
     private String estado;
     
     @Column(name = "fecha_emision")

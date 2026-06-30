@@ -182,5 +182,59 @@ services:
       mysql_db:
         condition: service_healthy
 
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_0_ID=ms-pedidos
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_0_URI=http://ms-pedidos:8080
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_0_PREDICATES_0=Path=/api/pedidos/**
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_1_ID=ms-clientes
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_1_URI=http://ms-clientes:8080
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_1_PREDICATES_0=Path=/api/clientes/**
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_2_ID=ms-inventario
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_2_URI=http://ms-inventario:8080
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_2_PREDICATES_0=Path=/api/productos/**
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_3_ID=ms-pagos
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_3_URI=http://ms-pagos:8080
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_3_PREDICATES_0=Path=/api/pagos/**
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_4_ID=ms-notificaciones
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_4_URI=http://ms-notificaciones:8080
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_4_PREDICATES_0=Path=/api/notificaciones/**
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_5_ID=ms-facturacion
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_5_URI=http://ms-facturacion:8080
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_5_PREDICATES_0=Path=/api/facturas/**
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_6_ID=ms-envios
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_6_URI=http://ms-envios:8080
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_6_PREDICATES_0=Path=/api/envios/**
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_7_ID=ms-soporte
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_7_URI=http://ms-soporte:8080
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_7_PREDICATES_0=Path=/api/tickets/**
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_8_ID=ms-reportes
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_8_URI=http://ms-reportes:8080
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_8_PREDICATES_0=Path=/api/reportes/**
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_9_ID=ms-seguridad
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_9_URI=http://ms-seguridad:8080
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_9_PREDICATES_0=Path=/api/usuarios/**
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_10_ID=ms-seguridad-auth
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_10_URI=http://ms-seguridad:8080
+      - SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_10_PREDICATES_0=Path=/auth/**
+    depends_on:
+      - ms-pedidos
+      - ms-clientes
+      - ms-inventario
+      - ms-pagos
+      - ms-notificaciones
+      - ms-facturacion
+      - ms-envios
+      - ms-soporte
+      - ms-reportes
+      - ms-seguridad
+
 volumes:
   mysql_data:

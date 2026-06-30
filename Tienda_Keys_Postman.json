@@ -1,108 +1,222 @@
 {
   "info": {
-    "name": "QuickOrder - Game Keys Store",
-    "description": "Colección actualizada para la tienda de Eneba (Keys de Juegos)",
+    "name": "QuickOrder - Game Keys Store (COMPLETO)",
+    "description": "Colección completa de todos los microservicios de QuickOrder. Incluye autenticación JWT automática, variables de entorno y casos de error. Usar con el entorno 'QuickOrder Local'.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "description": "URL del API Gateway (puerto 8080)"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "description": "JWT Token - se llena automáticamente al hacer login"
+    }
+  ],
   "item": [
     {
-      "name": "1. Inventario (Keys)",
+      "name": "0. Autenticación JWT",
       "item": [
         {
-          "name": "Listar Todo el Inventario",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8083/api/productos",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8083",
-              "path": [
-                "api",
-                "productos"
-              ]
+          "name": "Login (obtener token JWT)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "// El token viene en el campo 'respuestaText'",
+                  "if (jsonData.respuestaText && jsonData.respuestaInteger === 0) {",
+                  "    pm.collectionVariables.set('token', jsonData.respuestaText);",
+                  "    console.log('✅ Token JWT guardado correctamente');",
+                  "} else {",
+                  "    console.log('❌ Login fallido: ' + jsonData.respuestaText);",
+                  "}",
+                  "pm.test('Login exitoso - Status 200', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Respuesta contiene token JWT', function() {",
+                  "    pm.expect(jsonData.respuestaText).to.exist;",
+                  "    pm.expect(jsonData.respuestaInteger).to.equal(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
             }
-          }
-        },
-        {
-          "name": "Buscar por Plataforma (Steam)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8083/api/productos/plataforma/Steam",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8083",
-              "path": [
-                "api",
-                "productos",
-                "plataforma",
-                "Steam"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Añadir Key (Steam)",
+          ],
           "request": {
             "method": "POST",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
+              { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Elden Ring\",\n  \"descripcion\": \"Código de activación de Elden Ring\",\n  \"precio\": 45000.0,\n  \"stock\": 5,\n  \"plataforma\": \"Steam\",\n  \"region\": \"Global\",\n  \"codigoKey\": \"ELDN-RING-9999-STEA\"\n}"
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"1234\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8083/api/productos",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8083",
-              "path": [
-                "api",
-                "productos"
-              ]
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Hacer login con admin/1234. El token JWT se guarda automáticamente en {{token}}. La respuesta tiene el token en el campo 'respuestaText'."
+          }
+        },
+        {
+          "name": "Login - Error: credenciales inválidas (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Credenciales inválidas retornan código de error', function() {",
+                  "    pm.expect(jsonData.respuestaInteger).to.equal(2);",
+                  "});",
+                  "pm.test('Mensaje de error presente', function() {",
+                  "    pm.expect(jsonData.respuestaText).to.include('inválidas');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"usuario_falso\",\n  \"password\": \"password_incorrecto\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Debe retornar respuestaInteger=2 (UNAUTHORIZED) con credenciales incorrectas."
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Seguridad - Usuarios",
+      "item": [
+        {
+          "name": "Listar todos los usuarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios"]
             }
           }
         },
         {
-          "name": "Añadir Key (Xbox)",
+          "name": "Buscar usuario por ID (existe)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "1"]
+            }
+          }
+        },
+        {
+          "name": "Buscar usuario por ID - Error: no existe (404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/9999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "9999"]
+            },
+            "description": "Debe retornar 404 Not Found para un ID que no existe."
+          }
+        },
+        {
+          "name": "Crear usuario",
           "request": {
             "method": "POST",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Halo Infinite\",\n  \"descripcion\": \"Game Pass No Requerido\",\n  \"precio\": 35000.0,\n  \"stock\": 10,\n  \"plataforma\": \"Xbox\",\n  \"region\": \"USA\",\n  \"codigoKey\": \"XBOX-HALO-INFI-NITE\"\n}"
+              "raw": "{\n  \"username\": \"gamer_pro\",\n  \"email\": \"gamer@quickorder.cl\",\n  \"password\": \"segura123\",\n  \"rol\": \"USER\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8083/api/productos",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8083",
-              "path": [
-                "api",
-                "productos"
-              ]
+              "raw": "{{baseUrl}}/api/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios"]
+            }
+          }
+        },
+        {
+          "name": "Crear usuario - Error: campos vacíos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"\",\n  \"email\": \"no-es-email\",\n  \"password\": \"\",\n  \"rol\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios"]
+            },
+            "description": "Debe retornar 400 Bad Request con detalle de los campos inválidos."
+          }
+        },
+        {
+          "name": "Actualizar usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"gamer_pro_v2\",\n  \"email\": \"gamer_v2@quickorder.cl\",\n  \"password\": \"nueva_pass456\",\n  \"rol\": \"USER\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "1"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar usuario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "1"]
             }
           }
         }
@@ -112,84 +226,1170 @@
       "name": "2. Clientes",
       "item": [
         {
-          "name": "Listar Clientes",
+          "name": "Listar todos los clientes",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
             "url": {
-              "raw": "http://localhost:8082/api/clientes",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8082",
-              "path": [
-                "api",
-                "clientes"
-              ]
+              "raw": "{{baseUrl}}/api/clientes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clientes"]
             }
           }
         },
         {
-          "name": "Registrar Comprador",
+          "name": "Buscar cliente por ID (existe)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clientes", "1"]
+            }
+          }
+        },
+        {
+          "name": "Buscar cliente por ID - Error: no existe (404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/9999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clientes", "9999"]
+            }
+          }
+        },
+        {
+          "name": "Registrar cliente",
           "request": {
             "method": "POST",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nombre\": \"Gamer Pro 123\",\n  \"email\": \"gamer@pro.com\",\n  \"telefono\": \"+56987654321\",\n  \"pais\": \"Chile\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8082/api/clientes",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8082",
-              "path": [
-                "api",
-                "clientes"
-              ]
+              "raw": "{{baseUrl}}/api/clientes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clientes"]
+            }
+          }
+        },
+        {
+          "name": "Registrar cliente - Error: campos vacíos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"\",\n  \"email\": \"no-es-email\",\n  \"telefono\": \"\",\n  \"pais\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clientes"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar cliente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Gamer Pro Actualizado\",\n  \"email\": \"gamer_v2@pro.com\",\n  \"telefono\": \"+56911111111\",\n  \"pais\": \"Argentina\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clientes", "1"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar cliente",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clientes", "1"]
             }
           }
         }
       ]
     },
     {
-      "name": "3. Pedidos",
+      "name": "3. Inventario (Keys de Juegos)",
       "item": [
         {
-          "name": "Comprar Key",
+          "name": "Listar todo el inventario",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "productos"]
+            }
+          }
+        },
+        {
+          "name": "Buscar producto por ID (existe)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "productos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Buscar producto por ID - Error: no existe (404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos/9999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "productos", "9999"]
+            }
+          }
+        },
+        {
+          "name": "Buscar por plataforma (Steam)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos/plataforma/Steam",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "productos", "plataforma", "Steam"]
+            }
+          }
+        },
+        {
+          "name": "Buscar productos con stock bajo",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos/stock/bajo/5",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "productos", "stock", "bajo", "5"]
+            },
+            "description": "Productos con stock menor a 5 unidades."
+          }
+        },
+        {
+          "name": "Añadir Key (Steam - Elden Ring)",
           "request": {
             "method": "POST",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Elden Ring\",\n  \"descripcion\": \"Código de activación Steam de Elden Ring\",\n  \"precio\": 45000.0,\n  \"stock\": 5,\n  \"plataforma\": \"Steam\",\n  \"region\": \"Global\",\n  \"codigoKey\": \"ELDN-RING-9999-STEA\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/productos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "productos"]
+            }
+          }
+        },
+        {
+          "name": "Añadir Key - Error: campos vacíos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"\",\n  \"descripcion\": \"\",\n  \"precio\": -1,\n  \"stock\": 0,\n  \"plataforma\": \"\",\n  \"region\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/productos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "productos"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar producto",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Elden Ring GOTY\",\n  \"descripcion\": \"Edición completa con DLC Shadow of the Erdtree\",\n  \"precio\": 55000.0,\n  \"stock\": 10,\n  \"plataforma\": \"Steam\",\n  \"region\": \"Global\",\n  \"codigoKey\": \"ELDN-GOTY-2024-STEA\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/productos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "productos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar producto",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "productos", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Pedidos (con HATEOAS)",
+      "item": [
+        {
+          "name": "Listar todos los pedidos (HATEOAS)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pedidos"]
+            },
+            "description": "Retorna CollectionModel con links HATEOAS (_links)."
+          }
+        },
+        {
+          "name": "Buscar pedido por ID (HATEOAS)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pedidos", "1"]
+            },
+            "description": "Retorna EntityModel con links: self, all-pedidos, update, delete."
+          }
+        },
+        {
+          "name": "Buscar pedido por ID - Error: no existe (404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos/9999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pedidos", "9999"]
+            }
+          }
+        },
+        {
+          "name": "Pedidos por cliente (con datos de cliente)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos/cliente/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pedidos", "cliente", "1"]
+            },
+            "description": "Retorna DTO combinado: datos del cliente + sus pedidos."
+          }
+        },
+        {
+          "name": "Crear pedido (comprar key)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"clienteId\": 1,\n  \"productoId\": 1,\n  \"descripcion\": \"Compra de Elden Ring Steam Key\",\n  \"monto\": 45000.0,\n  \"estado\": \"CREADO\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8081/api/pedidos",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8081",
-              "path": [
-                "api",
-                "pedidos"
-              ]
+              "raw": "{{baseUrl}}/api/pedidos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pedidos"]
+            }
+          }
+        },
+        {
+          "name": "Crear pedido - Error: campos vacíos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": null,\n  \"descripcion\": \"\",\n  \"monto\": -100,\n  \"estado\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pedidos"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar pedido",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": 1,\n  \"productoId\": 1,\n  \"descripcion\": \"Compra procesada\",\n  \"monto\": 45000.0,\n  \"estado\": \"PROCESADO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pedidos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar pedido",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pedidos", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Pagos",
+      "item": [
+        {
+          "name": "Listar todos los pagos",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pagos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pagos"]
+            }
+          }
+        },
+        {
+          "name": "Buscar pago por ID (existe)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pagos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pagos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Buscar pago por ID - Error: no existe (404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pagos/9999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pagos", "9999"]
+            }
+          }
+        },
+        {
+          "name": "Pagos por pedido",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pagos/pedido/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pagos", "pedido", "1"]
+            }
+          }
+        },
+        {
+          "name": "Registrar pago",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pedidoId\": 1,\n  \"monto\": 45000.00,\n  \"metodoPago\": \"DEBITO\",\n  \"estado\": \"APROBADO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pagos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pagos"]
+            }
+          }
+        },
+        {
+          "name": "Registrar pago - Error: campos vacíos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pedidoId\": null,\n  \"monto\": -500,\n  \"metodoPago\": \"\",\n  \"estado\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pagos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pagos"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar pago",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pedidoId\": 1,\n  \"monto\": 45000.00,\n  \"metodoPago\": \"CREDITO\",\n  \"estado\": \"RECHAZADO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pagos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pagos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar pago",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pagos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pagos", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Notificaciones",
+      "item": [
+        {
+          "name": "Listar todas las notificaciones",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notificaciones"]
+            }
+          }
+        },
+        {
+          "name": "Buscar notificación por ID (existe)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notificaciones", "1"]
+            }
+          }
+        },
+        {
+          "name": "Buscar notificación por ID - Error: no existe (404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones/9999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notificaciones", "9999"]
+            }
+          }
+        },
+        {
+          "name": "Notificaciones por usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones/usuario/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notificaciones", "usuario", "1"]
+            }
+          }
+        },
+        {
+          "name": "Notificaciones no leídas por usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones/usuario/1/no-leidas",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notificaciones", "usuario", "1", "no-leidas"]
+            }
+          }
+        },
+        {
+          "name": "Crear notificación",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioId\": 1,\n  \"mensaje\": \"Tu pedido de Elden Ring fue enviado exitosamente\",\n  \"tipo\": \"PEDIDO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notificaciones"]
+            }
+          }
+        },
+        {
+          "name": "Crear notificación - Error: campos vacíos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioId\": null,\n  \"mensaje\": \"\",\n  \"tipo\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notificaciones"]
+            }
+          }
+        },
+        {
+          "name": "Marcar notificación como leída",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones/1/leer",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notificaciones", "1", "leer"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar notificación",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notificaciones", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Facturación",
+      "item": [
+        {
+          "name": "Listar todas las facturas",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/facturas",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "facturas"]
+            }
+          }
+        },
+        {
+          "name": "Buscar factura por ID (existe)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/facturas/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "facturas", "1"]
+            }
+          }
+        },
+        {
+          "name": "Buscar factura por ID - Error: no existe (404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/facturas/9999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "facturas", "9999"]
+            }
+          }
+        },
+        {
+          "name": "Crear factura",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pedidoId\": 1,\n  \"clienteId\": 1,\n  \"monto\": 45000.00,\n  \"estado\": \"EMITIDA\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/facturas",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "facturas"]
+            }
+          }
+        },
+        {
+          "name": "Crear factura - Error: monto negativo (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pedidoId\": null,\n  \"clienteId\": null,\n  \"monto\": -100,\n  \"estado\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/facturas",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "facturas"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar factura",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pedidoId\": 1,\n  \"clienteId\": 1,\n  \"monto\": 45000.00,\n  \"estado\": \"PAGADA\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/facturas/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "facturas", "1"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar factura",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/facturas/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "facturas", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Envíos",
+      "item": [
+        {
+          "name": "Listar todos los envíos",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/envios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "envios"]
+            }
+          }
+        },
+        {
+          "name": "Buscar envío por ID (existe)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/envios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "envios", "1"]
+            }
+          }
+        },
+        {
+          "name": "Buscar envío por ID - Error: no existe (404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/envios/9999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "envios", "9999"]
+            }
+          }
+        },
+        {
+          "name": "Crear envío (envío de key digital)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pedidoId\": 1,\n  \"emailDestino\": \"gamer@pro.com\",\n  \"estado\": \"ENVIADO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/envios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "envios"]
+            }
+          }
+        },
+        {
+          "name": "Crear envío - Error: email inválido (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pedidoId\": null,\n  \"emailDestino\": \"no-es-un-email\",\n  \"estado\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/envios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "envios"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar estado de envío",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pedidoId\": 1,\n  \"emailDestino\": \"gamer@pro.com\",\n  \"estado\": \"ENTREGADO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/envios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "envios", "1"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar envío",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/envios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "envios", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Soporte - Tickets",
+      "item": [
+        {
+          "name": "Listar todos los tickets",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets"]
+            }
+          }
+        },
+        {
+          "name": "Buscar ticket por ID (existe)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets", "1"]
+            }
+          }
+        },
+        {
+          "name": "Buscar ticket por ID - Error: no existe (404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets/9999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets", "9999"]
+            }
+          }
+        },
+        {
+          "name": "Tickets por cliente",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets/cliente/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets", "cliente", "1"]
+            }
+          }
+        },
+        {
+          "name": "Abrir ticket de soporte",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": 1,\n  \"asunto\": \"Key no funciona\",\n  \"descripcion\": \"El código ELDN-RING-9999-STEA me aparece como ya utilizado\",\n  \"estado\": \"ABIERTO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets"]
+            }
+          }
+        },
+        {
+          "name": "Abrir ticket - Error: campos vacíos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": null,\n  \"asunto\": \"\",\n  \"descripcion\": \"\",\n  \"estado\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets"]
+            }
+          }
+        },
+        {
+          "name": "Cerrar ticket",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": 1,\n  \"asunto\": \"Key no funciona - RESUELTO\",\n  \"descripcion\": \"Se envió nueva key al cliente por email\",\n  \"estado\": \"CERRADO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets", "1"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar ticket",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Reportes",
+      "item": [
+        {
+          "name": "Listar todos los reportes",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reportes"]
+            }
+          }
+        },
+        {
+          "name": "Buscar reporte por ID (existe)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reportes", "1"]
+            }
+          }
+        },
+        {
+          "name": "Buscar reporte por ID - Error: no existe (404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes/9999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reportes", "9999"]
+            }
+          }
+        },
+        {
+          "name": "Buscar reportes por tipo (VENTAS)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes/tipo/VENTAS",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reportes", "tipo", "VENTAS"]
+            }
+          }
+        },
+        {
+          "name": "Generar reporte de ventas",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ventas Junio 2026\",\n  \"tipo\": \"VENTAS\",\n  \"filtros\": \"{\\\"mes\\\":\\\"junio\\\",\\\"anio\\\":\\\"2026\\\"}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reportes"]
+            }
+          }
+        },
+        {
+          "name": "Generar reporte - Error: campos vacíos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"\",\n  \"tipo\": \"\",\n  \"filtros\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reportes"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar reporte",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ventas Junio 2026 - Actualizado\",\n  \"tipo\": \"VENTAS\",\n  \"filtros\": \"{\\\"mes\\\":\\\"junio\\\",\\\"anio\\\":\\\"2026\\\",\\\"plataforma\\\":\\\"Steam\\\"}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reportes", "1"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar reporte",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reportes", "1"]
             }
           }
         }
