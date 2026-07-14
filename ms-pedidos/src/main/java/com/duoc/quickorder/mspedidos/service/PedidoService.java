@@ -11,11 +11,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class PedidoService {
 
     private static final Logger log = LoggerFactory.getLogger(PedidoService.class);
+
+    // Estados válidos que puede tener un pedido en el sistema
+    private static final Set<String> ESTADOS_VALIDOS = Set.of(
+            "PENDIENTE", "PROCESADO", "ENVIADO", "ENTREGADO", "CANCELADO"
+    );
 
     private final PedidoRepository pedidoRepository;
     private final ClienteService clienteService;
@@ -38,7 +44,16 @@ public class PedidoService {
     }
 
     public Pedido guardarPedido(Pedido pedido) {
-        // Lógica de negocio: Validar cliente externo usando el ClienteService
+        // Regla de negocio 1: Validar que el estado sea uno de los permitidos
+        if (!ESTADOS_VALIDOS.contains(pedido.getEstado().toUpperCase())) {
+            log.warn("Intento de crear pedido con estado inválido: '{}'", pedido.getEstado());
+            throw new BadRequestException(
+                "Estado inválido: '" + pedido.getEstado() + "'. " +
+                "Los estados permitidos son: " + ESTADOS_VALIDOS
+            );
+        }
+
+        // Regla de negocio 2: Validar cliente externo usando el ClienteService
         ClienteDTO cliente = clienteService.obtenerClientePorId(pedido.getClienteId());
 
         if (cliente == null || cliente.getId() == null) {
@@ -47,12 +62,23 @@ public class PedidoService {
         }
 
         log.info("Cliente validado: {} - {}", cliente.getId(), cliente.getNombre());
+        pedido.setEstado(pedido.getEstado().toUpperCase()); // normalizar a mayúsculas
         pedido.setFechaCreacion(LocalDateTime.now());
         return pedidoRepository.save(pedido);
     }
 
     public Pedido actualizarPedido(Long id, Pedido pedidoActualizado) {
         log.info("Actualizando pedido con ID: {}", id);
+
+        // Validar estado antes de actualizar
+        if (!ESTADOS_VALIDOS.contains(pedidoActualizado.getEstado().toUpperCase())) {
+            log.warn("Intento de actualizar pedido {} con estado inválido: '{}'", id, pedidoActualizado.getEstado());
+            throw new BadRequestException(
+                "Estado inválido: '" + pedidoActualizado.getEstado() + "'. " +
+                "Los estados permitidos son: " + ESTADOS_VALIDOS
+            );
+        }
+
         Pedido pedidoExistente = pedidoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado con ID: " + id));
 
@@ -60,7 +86,7 @@ public class PedidoService {
         pedidoExistente.setProductoId(pedidoActualizado.getProductoId());
         pedidoExistente.setDescripcion(pedidoActualizado.getDescripcion());
         pedidoExistente.setMonto(pedidoActualizado.getMonto());
-        pedidoExistente.setEstado(pedidoActualizado.getEstado());
+        pedidoExistente.setEstado(pedidoActualizado.getEstado().toUpperCase());
         return pedidoRepository.save(pedidoExistente);
     }
 

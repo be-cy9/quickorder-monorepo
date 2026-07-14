@@ -170,6 +170,44 @@ class PedidoServiceTest {
     }
 
     // =========================================================================
+    // TESTS ADICIONALES PARA guardarPedido() — Reglas de negocio de estado
+    // =========================================================================
+
+    @Test
+    @DisplayName("guardarPedido - Regla de negocio: rechaza estado inválido antes de llamar al cliente")
+    void guardarPedido_debeLanzarExcepcion_cuandoEstadoEsInvalido() {
+        // ARRANGE: pedido con estado que no está en la lista permitida
+        Pedido pedidoConEstadoInvalido = new Pedido(1L, 10L, "Test", java.math.BigDecimal.valueOf(1000), "INVALIDO");
+
+        // ASSERT + ACT: debe lanzar BadRequestException antes de consultar el cliente
+        assertThrows(
+            BadRequestException.class,
+            () -> pedidoService.guardarPedido(pedidoConEstadoInvalido),
+            "Debe rechazar estados no permitidos"
+        );
+        // La validación de estado es PRIMERO — nunca debe llegar al clienteService
+        verify(clienteService, never()).obtenerClientePorId(anyLong());
+        verify(pedidoRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("guardarPedido - Regla de negocio: acepta estado en minúsculas y lo normaliza a mayúsculas")
+    void guardarPedido_debeNormalizar_estadoAMayusculas() {
+        // ARRANGE: estado en minúsculas (pendiente) — debe ser válido y normalizado
+        Pedido pedidoMinusculas = new Pedido(1L, 10L, "Test", java.math.BigDecimal.valueOf(1000), "pendiente");
+        when(clienteService.obtenerClientePorId(1L)).thenReturn(clienteEjemplo);
+        when(pedidoRepository.save(any(Pedido.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // ACT
+        Pedido resultado = pedidoService.guardarPedido(pedidoMinusculas);
+
+        // ASSERT: el estado debe estar en mayúsculas en el resultado
+        assertNotNull(resultado);
+        assertEquals("PENDIENTE", resultado.getEstado(), "El estado debe normalizarse a mayúsculas");
+        verify(pedidoRepository, times(1)).save(any(Pedido.class));
+    }
+
+    // =========================================================================
     // TESTS PARA actualizarPedido()
     // =========================================================================
 

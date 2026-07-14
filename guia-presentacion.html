@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuickOrder — Guía de Presentación ms-pedidos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --surface2: #1a2235;
+      --border: #1f2d45;
+      --accent: #3b82f6;
+      --accent2: #8b5cf6;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --orange: #f97316;
+      --cyan: #06b6d4;
+      --pink: #ec4899;
+      --text: #e2e8f0;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,14,26,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      height: 56px; overflow-x: auto;
+    }
+    nav a {
+      color: var(--text-dim); text-decoration: none;
+      font-size: 0.78rem; font-weight: 500;
+      padding: 0.3rem 0.7rem; border-radius: 6px;
+      white-space: nowrap; transition: all 0.2s;
+    }
+    nav a:hover { background: var(--surface2); color: var(--text); }
+    nav .logo {
+      font-weight: 800; font-size: 0.9rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-right: 1rem; white-space: nowrap;
+    }
+    nav .sep { color: var(--border); font-size: 1.2rem; }
+
+    /* HERO */
+    .hero {
+      text-align: center; padding: 4rem 2rem 2rem;
+      background: radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.12) 0%, transparent 70%);
+    }
+    .hero h1 { font-size: 2.6rem; font-weight: 800; line-height: 1.2; margin-bottom: 0.8rem; }
+    .hero h1 span { background: linear-gradient(135deg,#3b82f6,#8b5cf6,#ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .hero p { color: var(--text-dim); font-size: 1.05rem; max-width: 600px; margin: 0 auto 2rem; }
+    .badges { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid; }
+    .badge.blue { background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.3); color: #60a5fa; }
+    .badge.green { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: #34d399; }
+    .badge.purple { background: rgba(139,92,246,0.1); border-color: rgba(139,92,246,0.3); color: #a78bfa; }
+
+    /* SECTIONS */
+    .section { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .section-header {
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 1.5rem; padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-icon {
+      width: 42px; height: 42px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0;
+    }
+    .section-header h2 { font-size: 1.3rem; font-weight: 700; }
+    .section-header .ie-tag {
+      margin-left: auto; font-size: 0.7rem; font-weight: 600;
+      padding: 0.2rem 0.6rem; border-radius: 4px;
+      background: rgba(59,130,246,0.15); color: #60a5fa;
+      border: 1px solid rgba(59,130,246,0.2); white-space: nowrap;
+    }
+
+    /* ARCHITECTURE DIAGRAM */
+    .arch-grid {
+      display: grid; gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .arch-row { display: flex; align-items: center; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .ms-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1rem 1.2rem;
+      text-align: center; min-width: 130px;
+      transition: all 0.25s; cursor: default;
+      position: relative;
+    }
+    .ms-box:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 0 20px rgba(59,130,246,0.2); }
+    .ms-box .port { font-size: 0.65rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+    .ms-box .name { font-weight: 600; font-size: 0.85rem; margin: 0.3rem 0 0.2rem; }
+    .ms-box .route { font-size: 0.65rem; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
+    .ms-box.gateway { border-color: rgba(59,130,246,0.4); background: rgba(59,130,246,0.07); }
+    .ms-box.gateway .name { color: #60a5fa; }
+    .ms-box.pedidos { border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.07); }
+    .ms-box.pedidos .name { color: #34d399; }
+    .ms-box.clientes { border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.07); }
+    .ms-box.clientes .name { color: #fbbf24; }
+    .ms-box.other { border-color: var(--border); opacity: 0.55; }
+    .arrow { color: var(--text-muted); font-size: 1.4rem; flex-shrink: 0; }
+    .arrow.down { transform: rotate(90deg); }
+    .arrow-label { font-size: 0.7rem; color: var(--text-dim); text-align: center; }
+    .connector-box {
+      background: var(--surface2); border: 1px dashed var(--border);
+      border-radius: 8px; padding: 0.5rem 1rem;
+      font-size: 0.72rem; color: var(--text-dim); text-align: center;
+    }
+
+    /* FLOW DIAGRAM */
+    .flow-container {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.5rem; margin-bottom: 1.5rem;
+    }
+    .flow-step {
+      display: flex; align-items: flex-start; gap: 1rem;
+      padding: 0.8rem 0; border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .flow-step:last-child { border-bottom: none; }
+    .step-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.8rem; flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step-content { flex: 1; }
+    .step-content .step-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.3rem; }
+    .step-content .step-detail { font-size: 0.78rem; color: var(--text-dim); line-height: 1.5; }
+    .step-content .step-file {
+      display: inline-block; margin-top: 0.3rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem; padding: 0.1rem 0.5rem;
+      border-radius: 4px; background: var(--surface2);
+      color: var(--accent); border: 1px solid var(--border);
+    }
+    .step-content .step-url {
+      display: inline-block; margin-top: 0.3rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem; padding: 0.2rem 0.6rem;
+      border-radius: 4px; background: rgba(16,185,129,0.08);
+      color: #34d399; border: 1px solid rgba(16,185,129,0.2);
+    }
+
+    /* CODE BLOCKS */
+    pre {
+      background: #0d1117; border: 1px solid var(--border);
+      border-radius: 10px; padding: 1rem 1.2rem;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+      line-height: 1.7; overflow-x: auto; margin: 0.8rem 0;
+      color: #e2e8f0;
+    }
+    .kw { color: #ff7b72; }
+    .an { color: #d2a8ff; }
+    .str { color: #a5d6ff; }
+    .cm { color: #8b949e; font-style: italic; }
+    .fn { color: #ffa657; }
+    .ty { color: #79c0ff; }
+    .nb { color: #56d364; }
+
+    /* CARDS GRID */
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.2rem; transition: all 0.25s;
+    }
+    .card:hover { border-color: var(--accent); box-shadow: 0 0 20px rgba(59,130,246,0.1); }
+    .card h3 { font-size: 0.88rem; font-weight: 700; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+    .card p, .card li { font-size: 0.8rem; color: var(--text-dim); line-height: 1.6; }
+    .card ul { padding-left: 1.2rem; }
+    .card .file-link {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.4rem 0.6rem; border-radius: 6px;
+      background: var(--surface2); margin: 0.3rem 0;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+      color: var(--accent); border: 1px solid var(--border);
+      text-decoration: none; transition: all 0.2s;
+    }
+    .card .file-link:hover { border-color: var(--accent); background: rgba(59,130,246,0.1); }
+
+    /* ENDPOINTS TABLE */
+    .table-wrap { overflow-x: auto; margin: 1rem 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    th { background: var(--surface2); padding: 0.6rem 0.8rem; text-align: left; font-weight: 600; color: var(--text-dim); border-bottom: 1px solid var(--border); }
+    td { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--border); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--surface2); }
+    .method { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 4px; }
+    .get { background: rgba(16,185,129,0.15); color: #34d399; }
+    .post { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .put { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .delete { background: rgba(239,68,68,0.15); color: #f87171; }
+    .url-cell { font-family: 'JetBrains Mono', monospace; font-size: 0.73rem; color: var(--text-dim); }
+    .code-cell { font-family: 'JetBrains Mono', monospace; font-size: 0.73rem; font-weight: 600; }
+    .code-200 { color: #34d399; }
+    .code-201 { color: #60a5fa; }
+    .code-204 { color: #a78bfa; }
+    .code-400 { color: #fbbf24; }
+    .code-404 { color: #f87171; }
+
+    /* PAYLOADS */
+    .payload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+    @media(max-width:700px) { .payload-grid { grid-template-columns: 1fr; } }
+    .payload-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .payload-header { padding: 0.6rem 1rem; font-size: 0.75rem; font-weight: 600; background: var(--surface2); border-bottom: 1px solid var(--border); }
+    .payload-header.req { color: #60a5fa; }
+    .payload-header.ok { color: #34d399; }
+    .payload-header.err { color: #f87171; }
+    .payload-header.warn { color: #fbbf24; }
+
+    /* QA TABLE */
+    .qa-list { display: flex; flex-direction: column; gap: 0.8rem; }
+    .qa-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .qa-q { padding: 0.7rem 1rem; font-weight: 600; font-size: 0.82rem; background: var(--surface2); border-bottom: 1px solid var(--border); color: #fbbf24; display: flex; align-items: center; gap: 0.5rem; }
+    .qa-a { padding: 0.7rem 1rem; font-size: 0.8rem; color: var(--text-dim); line-height: 1.6; }
+    .qa-a code { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; background: var(--surface2); padding: 0.1rem 0.3rem; border-radius: 3px; color: #a5d6ff; }
+
+    /* COMMANDS */
+    .cmd-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 0.8rem; }
+    .cmd-item {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      padding: 1rem; display: flex; flex-direction: column; gap: 0.4rem;
+    }
+    .cmd-label { font-size: 0.72rem; color: var(--text-dim); font-weight: 500; }
+    .cmd-code { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: #34d399; word-break: break-all; }
+
+    /* DIVIDER */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+    /* CHECKLIST */
+    .checklist { display: flex; flex-direction: column; gap: 0.5rem; }
+    .check-item { display: flex; align-items: flex-start; gap: 0.7rem; font-size: 0.82rem; color: var(--text-dim); padding: 0.5rem 0.8rem; background: var(--surface); border-radius: 8px; border: 1px solid var(--border); }
+    .check-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* RESPONSIVE */
+    @media(max-width:600px) { .hero h1 { font-size: 1.8rem; } .arch-row { justify-content: flex-start; } }
+
+    /* SCROLL REVEAL */
+    .reveal { opacity: 0; transform: translateY(20px); transition: all 0.5s; }
+    .reveal.visible { opacity: 1; transform: none; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="logo">⚡ QuickOrder</span>
+  <span class="sep">|</span>
+  <a href="#arranque">Arranque</a>
+  <a href="#arquitectura">Arquitectura</a>
+  <a href="#gateway">API Gateway</a>
+  <a href="#comunicacion">Comunicación</a>
+  <a href="#endpoints">Endpoints</a>
+  <a href="#validaciones">Validaciones</a>
+  <a href="#negocio">Negocio</a>
+  <a href="#logs">Logs/Errores</a>
+  <a href="#swagger">Swagger</a>
+  <a href="#tests">Tests</a>
+  <a href="#preguntas">Q&amp;A Profe</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Guía de Presentación<br/><span>ms-pedidos</span></h1>
+  <p>Defensa completa: arquitectura, código, endpoints, tests y preguntas del profe — todo en un lugar.</p>
+  <div class="badges">
+    <span class="badge blue">Spring Boot 3.5</span>
+    <span class="badge green">18 Tests ✓</span>
+    <span class="badge purple">OpenAPI / Swagger</span>
+    <span class="badge blue">JWT Security</span>
+    <span class="badge green">API Gateway</span>
+    <span class="badge purple">WebClient → ms-clientes</span>
+  </div>
+</div>
+
+<!-- ARRANQUE -->
+<div class="section reveal" id="arranque">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(16,185,129,0.1)">⚡</div>
+    <div>
+      <h2>Antes de entrar — Checklist de arranque</h2>
+      <div style="font-size:0.8rem;color:var(--text-dim)">Ejecutar en terminales separadas desde la raíz del monorepo</div>
+    </div>
+  </div>
+  <div class="checklist">
+    <div class="check-item"><span class="check-icon">🖥️</span><span><strong>Terminal 1:</strong> &nbsp;<code style="font-family:JetBrains Mono,monospace;color:#34d399">./mvnw spring-boot:run -pl ms-pedidos</code> → esperar puerto 8081</span></div>
+    <div class="check-item"><span class="check-icon">🖥️</span><span><strong>Terminal 2:</strong> &nbsp;<code style="font-family:JetBrains Mono,monospace;color:#fbbf24">./mvnw spring-boot:run -pl ms-clientes</code> → esperar puerto 8082</span></div>
+    <div class="check-item"><span class="check-icon">🖥️</span><span><strong>Terminal 3:</strong> &nbsp;<code style="font-family:JetBrains Mono,monospace;color:#a78bfa">./mvnw spring-boot:run -pl api-gateway</code> → esperar puerto 8080</span></div>
+    <div class="check-item"><span class="check-icon">✅</span><span>Verificar: <a href="http://localhost:8081/swagger-ui/index.html" target="_blank" style="color:#60a5fa">http://localhost:8081/swagger-ui/index.html</a> (Swagger UI carga)</span></div>
+    <div class="check-item"><span class="check-icon">✅</span><span>Verificar: <a href="http://localhost:8080/api/pedidos" target="_blank" style="color:#60a5fa">http://localhost:8080/api/pedidos</a> (Gateway enruta a ms-pedidos)</span></div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ARQUITECTURA -->
+<div class="section reveal" id="arquitectura">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(139,92,246,0.1)">🏗️</div>
+    <div><h2>Arquitectura del Sistema Distribuido</h2></div>
+    <span class="ie-tag">IE 1.2.1 · IE 3.3.1</span>
+  </div>
+
+  <!-- Capa cliente -->
+  <div style="text-align:center;margin-bottom:0.5rem">
+    <div class="ms-box gateway" style="display:inline-block;min-width:220px">
+      <div class="port">🌐 Postman / Frontend / Browser</div>
+      <div class="name">Cliente externo</div>
+      <div class="route">hace peticiones HTTP</div>
+    </div>
+  </div>
+  <div style="text-align:center;font-size:1.5rem;color:var(--accent);margin:0.3rem 0">↓</div>
+
+  <!-- API Gateway -->
+  <div style="text-align:center;margin-bottom:0.5rem">
+    <div class="ms-box gateway" style="display:inline-block;min-width:220px">
+      <div class="port">🔀 Puerto 8080</div>
+      <div class="name">API GATEWAY</div>
+      <div class="route">Punto de entrada único del sistema</div>
+    </div>
+  </div>
+  <div style="text-align:center;font-size:1.1rem;color:var(--text-muted);margin:0.3rem 0">enruta según la ruta URL →</div>
+
+  <!-- Microservicios -->
+  <div class="arch-row" style="margin-bottom:1rem">
+    <div class="ms-box pedidos">
+      <div class="port">🟢 :8081</div>
+      <div class="name">ms-pedidos</div>
+      <div class="route">/api/pedidos/**</div>
+    </div>
+    <div class="ms-box clientes">
+      <div class="port">🟡 :8082</div>
+      <div class="name">ms-clientes</div>
+      <div class="route">/api/clientes/**</div>
+    </div>
+    <div class="ms-box other">
+      <div class="port">:8083</div>
+      <div class="name">ms-inventario</div>
+      <div class="route">/api/productos/**</div>
+    </div>
+    <div class="ms-box other">
+      <div class="port">:8084</div>
+      <div class="name">ms-pagos</div>
+      <div class="route">/api/pagos/**</div>
+    </div>
+    <div class="ms-box other">
+      <div class="port">:8087</div>
+      <div class="name">ms-facturacion</div>
+      <div class="route">/api/facturas/**</div>
+    </div>
+    <div class="ms-box other" style="font-size:0.75rem">
+      <div class="port">+ 5 más</div>
+      <div class="name">ms-envios, soporte...</div>
+      <div class="route">:8086–:8091</div>
+    </div>
+  </div>
+
+  <!-- Comunicación interna -->
+  <div style="text-align:center;margin:0.5rem 0">
+    <div class="connector-box" style="display:inline-block;max-width:500px">
+      🔗 <strong style="color:#34d399">ms-pedidos</strong> llama internamente via <code style="color:#a5d6ff">WebClient HTTP</code> a <strong style="color:#fbbf24">ms-clientes</strong> cuando necesita datos del cliente
+    </div>
+  </div>
+
+  <!-- Bases de datos -->
+  <div class="arch-row" style="margin-top:1rem">
+    <div class="ms-box" style="border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.04)">
+      <div class="port">🗄️ MySQL :3307</div>
+      <div class="name" style="color:#34d399">db_pedidos</div>
+      <div class="route">tabla: pedidos</div>
+    </div>
+    <div class="ms-box" style="border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.04)">
+      <div class="port">🗄️ MySQL :3308</div>
+      <div class="name" style="color:#fbbf24">db_clientes</div>
+      <div class="route">tabla: clientes</div>
+    </div>
+    <div class="ms-box other">
+      <div class="port">🗄️ BD separadas</div>
+      <div class="name">Cada ms tiene</div>
+      <div class="route">su propia BD</div>
+    </div>
+  </div>
+
+  <div style="margin-top:1.2rem;padding:0.8rem 1rem;background:rgba(59,130,246,0.07);border:1px solid rgba(59,130,246,0.2);border-radius:8px;font-size:0.8rem;color:var(--text-dim)">
+    💡 <strong style="color:#60a5fa">Principio clave:</strong> Cada microservicio tiene su propia base de datos. Nunca acceden directamente a la BD de otro. La comunicación es siempre por HTTP REST.
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- API GATEWAY -->
+<div class="section reveal" id="gateway">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(59,130,246,0.1)">🔀</div>
+    <div><h2>API Gateway — Enrutamiento</h2></div>
+    <span class="ie-tag">IE 3.3.1 · IE 3.3.2</span>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h3>📄 Archivo clave</h3>
+      <a class="file-link" href="#">api-gateway/src/main/resources/application.yml</a>
+      <pre><span class="kw">server</span>:
+  <span class="kw">port</span>: <span class="nb">8080</span>   <span class="cm"># ← Gateway escucha aquí</span>
+
+<span class="kw">spring</span>:
+  <span class="kw">cloud</span>:
+    <span class="kw">gateway</span>:
+      <span class="kw">routes</span>:
+        - <span class="kw">id</span>: ms-pedidos
+          <span class="kw">uri</span>: <span class="str">http://localhost:8081</span>
+          <span class="kw">predicates</span>:
+            - <span class="str">Path=/api/pedidos/**</span>
+        - <span class="kw">id</span>: ms-clientes
+          <span class="kw">uri</span>: <span class="str">http://localhost:8082</span>
+          <span class="kw">predicates</span>:
+            - <span class="str">Path=/api/clientes/**</span></pre>
+    </div>
+    <div class="card">
+      <h3>🧪 Demo en Postman</h3>
+      <p style="margin-bottom:0.8rem">Las dos URLs dan la <strong>misma respuesta</strong>:</p>
+      <div style="display:flex;flex-direction:column;gap:0.5rem">
+        <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:6px;padding:0.6rem 0.8rem">
+          <div style="font-size:0.68rem;color:#34d399;font-weight:600;margin-bottom:0.2rem">DIRECTO al microservicio</div>
+          <code style="font-family:JetBrains Mono,monospace;font-size:0.72rem;color:var(--text-dim)">GET http://localhost:<strong style="color:#34d399">8081</strong>/api/pedidos</code>
+        </div>
+        <div style="text-align:center;color:var(--text-muted);font-size:0.8rem">= misma respuesta =</div>
+        <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:6px;padding:0.6rem 0.8rem">
+          <div style="font-size:0.68rem;color:#60a5fa;font-weight:600;margin-bottom:0.2rem">POR API GATEWAY</div>
+          <code style="font-family:JetBrains Mono,monospace;font-size:0.72rem;color:var(--text-dim)">GET http://localhost:<strong style="color:#60a5fa">8080</strong>/api/pedidos</code>
+        </div>
+      </div>
+      <p style="margin-top:0.8rem;font-size:0.75rem">El Gateway es <strong>transparente</strong> — el cliente no sabe a cuál microservicio se conecta.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- COMUNICACIÓN ENTRE MICROSERVICIOS -->
+<div class="section reveal" id="comunicacion">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(245,158,11,0.1)">🔗</div>
+    <div><h2>Comunicación entre Microservicios</h2></div>
+    <span class="ie-tag">IE 2.4.1 · IE 2.4.2</span>
+  </div>
+
+  <!-- Flujo paso a paso -->
+  <div class="flow-container">
+    <div style="font-weight:700;font-size:0.85rem;margin-bottom:1rem;color:var(--text-dim)">
+      📡 Flujo completo: <code style="color:#60a5fa">GET /api/pedidos/cliente/1</code>
+    </div>
+    <div class="flow-step">
+      <div class="step-num" style="background:rgba(59,130,246,0.2);color:#60a5fa">1</div>
+      <div class="step-content">
+        <div class="step-title">Postman llama al API Gateway</div>
+        <div class="step-url">GET http://localhost:8080/api/pedidos/cliente/1</div>
+        <div class="step-detail">El Gateway lee la ruta <code>/api/pedidos/**</code> → enruta a <strong>8081</strong></div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num" style="background:rgba(16,185,129,0.2);color:#34d399">2</div>
+      <div class="step-content">
+        <div class="step-title">PedidoController recibe la petición</div>
+        <span class="step-file">PedidoController.java → getPedidosConCliente(clienteId=1)</span>
+        <div class="step-detail">Delega al PedidoService — el Controller no tiene lógica de negocio.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num" style="background:rgba(245,158,11,0.2);color:#fbbf24">3</div>
+      <div class="step-content">
+        <div class="step-title">PedidoService llama a ClienteService</div>
+        <span class="step-file">PedidoService.java → clienteService.obtenerClientePorId(1)</span>
+        <div class="step-detail">PedidoService necesita datos del cliente → delega a ClienteService.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num" style="background:rgba(245,158,11,0.2);color:#fbbf24">4</div>
+      <div class="step-content">
+        <div class="step-title">ClienteService hace llamada HTTP a ms-clientes</div>
+        <span class="step-file">ClienteService.java → llamarMsClientes(1)</span>
+        <div class="step-url">GET http://localhost:8082/api/clientes/1</div>
+        <div class="step-detail">WebClient ejecuta la petición HTTP. La respuesta JSON se deserializa automáticamente en un <code>ClienteDTO</code>.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num" style="background:rgba(139,92,246,0.2);color:#a78bfa">5</div>
+      <div class="step-content">
+        <div class="step-title">PedidoService consulta su propia BD</div>
+        <span class="step-file">PedidoRepository.findByClienteId(1) → BD local db_pedidos</span>
+        <div class="step-detail">Obtiene los pedidos del cliente desde la base de datos propia de ms-pedidos.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num" style="background:rgba(16,185,129,0.2);color:#34d399">6</div>
+      <div class="step-content">
+        <div class="step-title">Respuesta combinada de dos microservicios</div>
+        <span class="step-file">new RespuestaCombinadaDTO(cliente, pedidos)</span>
+        <div class="step-detail">Un solo JSON con datos de <strong style="color:#fbbf24">ms-clientes</strong> y de <strong style="color:#34d399">ms-pedidos</strong> combinados.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Los 5 archivos -->
+  <div style="font-weight:700;font-size:0.85rem;margin-bottom:1rem">📂 Los 5 archivos que mostrar al profe (en orden):</div>
+  <div class="cards">
+    <div class="card">
+      <h3>① WebClientConfig.java</h3>
+      <a class="file-link" href="#">config/WebClientConfig.java</a>
+      <pre><span class="an">@Configuration</span>
+<span class="kw">public class</span> <span class="ty">WebClientConfig</span> {
+    <span class="an">@Bean</span>
+    <span class="kw">public</span> <span class="ty">WebClient</span> <span class="fn">webClient</span>() {
+        <span class="kw">return</span> WebClient.<span class="fn">builder</span>().<span class="fn">build</span>();
+        <span class="cm">// Spring inyecta este bean donde se necesite</span>
+    }
+}</pre>
+    </div>
+    <div class="card">
+      <h3>② ClienteService.java</h3>
+      <a class="file-link" href="#">service/ClienteService.java</a>
+      <pre><span class="kw">public</span> <span class="ty">ClienteDTO</span> <span class="fn">obtenerClientePorId</span>(<span class="ty">Long</span> id) {
+    <span class="kw">try</span> {
+        <span class="kw">return</span> <span class="fn">llamarMsClientes</span>(id); <span class="cm">// ← HTTP</span>
+    } <span class="kw">catch</span> (<span class="ty">Exception</span> e) {
+        <span class="cm">// FALLBACK GRACEFUL</span>
+        <span class="ty">ClienteDTO</span> def = <span class="kw">new</span> <span class="ty">ClienteDTO</span>();
+        def.<span class="fn">setNombre</span>(<span class="str">"Cliente no encontrado"</span>);
+        <span class="kw">return</span> def;
+    }
+}
+<span class="kw">protected</span> <span class="ty">ClienteDTO</span> <span class="fn">llamarMsClientes</span>(<span class="ty">Long</span> id) {
+    <span class="kw">return</span> webClient.<span class="fn">get</span>()
+        .<span class="fn">uri</span>(<span class="str">"http://localhost:8082/api/clientes/{id}"</span>, id)
+        .<span class="fn">retrieve</span>()
+        .<span class="fn">bodyToMono</span>(<span class="ty">ClienteDTO</span>.class)
+        .<span class="fn">block</span>();
+}</pre>
+    </div>
+    <div class="card">
+      <h3>③ ClienteDTO.java</h3>
+      <a class="file-link" href="#">dto/ClienteDTO.java</a>
+      <pre><span class="cm">// Copia PROPIA de ms-pedidos — autonomía</span>
+<span class="cm">// No comparte clases con ms-clientes</span>
+<span class="kw">public class</span> <span class="ty">ClienteDTO</span> {
+    <span class="kw">private</span> <span class="ty">Long</span> id;
+    <span class="kw">private</span> <span class="ty">String</span> nombre;
+    <span class="kw">private</span> <span class="ty">String</span> email;
+    <span class="kw">private</span> <span class="ty">String</span> telefono;
+    <span class="kw">private</span> <span class="ty">String</span> direccion;
+}</pre>
+    </div>
+    <div class="card">
+      <h3>④ RespuestaCombinadaDTO.java</h3>
+      <a class="file-link" href="#">dto/RespuestaCombinadaDTO.java</a>
+      <pre><span class="cm">// Combina datos de 2 microservicios</span>
+<span class="kw">public class</span> <span class="ty">RespuestaCombinadaDTO</span> {
+    <span class="cm">// ← viene de ms-clientes :8082</span>
+    <span class="kw">private</span> <span class="ty">ClienteDTO</span> cliente;
+    <span class="cm">// ← viene de ms-pedidos :8081</span>
+    <span class="kw">private</span> <span class="ty">List</span>&lt;<span class="ty">Pedido</span>&gt; pedidos;
+}</pre>
+    </div>
+    <div class="card">
+      <h3>⑤ ClienteController.java (ms-clientes)</h3>
+      <a class="file-link" href="#">ms-clientes/controller/ClienteController.java</a>
+      <pre><span class="cm">// El endpoint que ms-pedidos CONSUME</span>
+<span class="an">@GetMapping</span>(<span class="str">"/{id}"</span>)
+<span class="kw">public</span> <span class="ty">ResponseEntity</span>&lt;<span class="ty">Cliente</span>&gt; <span class="fn">getById</span>(
+        <span class="an">@PathVariable</span> <span class="ty">Long</span> id) {
+    <span class="ty">Cliente</span> c = clienteRepository
+        .<span class="fn">findById</span>(id).<span class="fn">orElseThrow</span>(...);
+    <span class="kw">return</span> ResponseEntity.<span class="fn">ok</span>(c);
+    <span class="cm">// → JSON que llega como ClienteDTO</span>
+}</pre>
+    </div>
+    <div class="card">
+      <h3>🎯 Demo Fallback</h3>
+      <div style="display:flex;flex-direction:column;gap:0.6rem">
+        <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:6px;padding:0.6rem">
+          <div style="font-size:0.68rem;color:#34d399;font-weight:600">ms-clientes ENCENDIDO</div>
+          <pre style="margin:0.3rem 0;padding:0.4rem;font-size:0.7rem">{ "cliente": { "nombre": "Juan Pérez" },
+  "pedidos": [...] }</pre>
+        </div>
+        <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:6px;padding:0.6rem">
+          <div style="font-size:0.68rem;color:#f87171;font-weight:600">ms-clientes APAGADO (fallback)</div>
+          <pre style="margin:0.3rem 0;padding:0.4rem;font-size:0.7rem">{ "cliente": { "nombre": "Cliente no encontrado",
+               "email": "no-disponible@mail.com" },
+  "pedidos": [...] } <span style="color:#34d399">← sigue funcionando!</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ENDPOINTS -->
+<div class="section reveal" id="endpoints">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(16,185,129,0.1)">🌐</div>
+    <div><h2>Endpoints REST — Tabla completa</h2></div>
+    <span class="ie-tag">IE 1.1.1 · IE 1.3.3</span>
+  </div>
+
+  <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:0.8rem 1rem;margin-bottom:1rem;font-size:0.8rem">
+    🔑 <strong>Token JWT necesario:</strong> primero hacer <code style="color:#a5d6ff">POST /auth/login</code> con <code style="color:#34d399">{"username":"admin","password":"1234"}</code> → copiar token → Header: <code style="color:#a5d6ff">Authorization: Bearer &lt;TOKEN&gt;</code>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>Método</th><th>URL (directo)</th><th>URL (Gateway)</th><th>Descripción</th><th>HTTP</th></tr>
+      <tr>
+        <td><span class="method post">POST</span></td>
+        <td class="url-cell">:8081/auth/login</td>
+        <td class="url-cell">—</td>
+        <td style="font-size:0.78rem">Obtener token JWT</td>
+        <td class="code-cell code-200">200</td>
+      </tr>
+      <tr>
+        <td><span class="method get">GET</span></td>
+        <td class="url-cell">:8081/api/pedidos</td>
+        <td class="url-cell">:8080/api/pedidos</td>
+        <td style="font-size:0.78rem">Listar todos los pedidos</td>
+        <td class="code-cell code-200">200</td>
+      </tr>
+      <tr>
+        <td><span class="method get">GET</span></td>
+        <td class="url-cell">:8081/api/pedidos/1</td>
+        <td class="url-cell">:8080/api/pedidos/1</td>
+        <td style="font-size:0.78rem">Buscar pedido por ID</td>
+        <td class="code-cell code-200">200</td>
+      </tr>
+      <tr>
+        <td><span class="method get">GET</span></td>
+        <td class="url-cell">:8081/api/pedidos/9999</td>
+        <td class="url-cell">:8080/api/pedidos/9999</td>
+        <td style="font-size:0.78rem">ID que no existe → 404</td>
+        <td class="code-cell code-404">404</td>
+      </tr>
+      <tr>
+        <td><span class="method post">POST</span></td>
+        <td class="url-cell">:8081/api/pedidos</td>
+        <td class="url-cell">:8080/api/pedidos</td>
+        <td style="font-size:0.78rem">Crear pedido (body JSON)</td>
+        <td class="code-cell code-201">201</td>
+      </tr>
+      <tr>
+        <td><span class="method put">PUT</span></td>
+        <td class="url-cell">:8081/api/pedidos/1</td>
+        <td class="url-cell">:8080/api/pedidos/1</td>
+        <td style="font-size:0.78rem">Actualizar pedido</td>
+        <td class="code-cell code-200">200</td>
+      </tr>
+      <tr>
+        <td><span class="method delete">DELETE</span></td>
+        <td class="url-cell">:8081/api/pedidos/1</td>
+        <td class="url-cell">:8080/api/pedidos/1</td>
+        <td style="font-size:0.78rem">Eliminar pedido</td>
+        <td class="code-cell code-204">204</td>
+      </tr>
+      <tr>
+        <td><span class="method get">GET</span></td>
+        <td class="url-cell">:8081/api/pedidos/cliente/1</td>
+        <td class="url-cell">:8080/api/pedidos/cliente/1</td>
+        <td style="font-size:0.78rem">Pedidos + datos del cliente (comunicación entre ms)</td>
+        <td class="code-cell code-200">200</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- VALIDACIONES -->
+<div class="section reveal" id="validaciones">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(239,68,68,0.1)">🛡️</div>
+    <div><h2>Validaciones y Manejo de Errores</h2></div>
+    <span class="ie-tag">IE 1.3.1 · IE 1.3.2 · IE 2.3.1</span>
+  </div>
+
+  <div class="payload-grid">
+    <div class="payload-box">
+      <div class="payload-header req">📤 POST /api/pedidos — Body válido</div>
+      <pre style="margin:0;border:none;border-radius:0;padding:0.8rem">{
+  "clienteId": 1,
+  "productoId": 10,
+  "descripcion": "Pedido de ejemplo",
+  "monto": 15000,
+  "estado": "PENDIENTE"
+}</pre>
+    </div>
+    <div class="payload-box">
+      <div class="payload-header ok">✅ Respuesta 201 CREATED</div>
+      <pre style="margin:0;border:none;border-radius:0;padding:0.8rem">{
+  "id": 1,
+  "clienteId": 1,
+  "estado": "PENDIENTE",
+  "monto": 15000,
+  "fechaCreacion": "2026-07-13T19:00:00"
+}</pre>
+    </div>
+    <div class="payload-box">
+      <div class="payload-header warn">⚠️ Body inválido (monto negativo, sin descripción)</div>
+      <pre style="margin:0;border:none;border-radius:0;padding:0.8rem">{
+  "clienteId": 1,
+  "productoId": 10,
+  "monto": -100,
+  "estado": "PENDIENTE"
+}</pre>
+    </div>
+    <div class="payload-box">
+      <div class="payload-header err">❌ Respuesta 400 BAD REQUEST</div>
+      <pre style="margin:0;border:none;border-radius:0;padding:0.8rem">{
+  "timestamp": "...",
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Error de validación",
+  "details": {
+    "descripcion": "La descripción es obligatoria",
+    "monto": "El monto debe ser positivo"
+  }
+}</pre>
+    </div>
+    <div class="payload-box">
+      <div class="payload-header warn">⚠️ Estado inválido</div>
+      <pre style="margin:0;border:none;border-radius:0;padding:0.8rem">{
+  "clienteId": 1,
+  "productoId": 10,
+  "descripcion": "Test",
+  "monto": 5000,
+  "estado": "INVENTADO"
+}</pre>
+    </div>
+    <div class="payload-box">
+      <div class="payload-header err">❌ 400 — Regla de negocio violada</div>
+      <pre style="margin:0;border:none;border-radius:0;padding:0.8rem">{
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Estado inválido: 'INVENTADO'.
+Los estados permitidos son:
+[PENDIENTE, PROCESADO, ENVIADO,
+ ENTREGADO, CANCELADO]"
+}</pre>
+    </div>
+  </div>
+
+  <div style="margin-top:1rem;font-size:0.8rem;color:var(--text-dim)">
+    <strong>Estados válidos:</strong>
+    <span style="margin-left:0.5rem">
+      <span class="badge blue" style="font-size:0.72rem">PENDIENTE</span>
+      <span class="badge green" style="font-size:0.72rem;margin-left:0.3rem">PROCESADO</span>
+      <span class="badge purple" style="font-size:0.72rem;margin-left:0.3rem">ENVIADO</span>
+      <span class="badge" style="font-size:0.72rem;margin-left:0.3rem;background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:#fbbf24">ENTREGADO</span>
+      <span class="badge" style="font-size:0.72rem;margin-left:0.3rem;background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:#f87171">CANCELADO</span>
+    </span>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- REGLAS DE NEGOCIO -->
+<div class="section reveal" id="negocio">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(139,92,246,0.1)">⚙️</div>
+    <div><h2>Reglas de Negocio — PedidoService</h2></div>
+    <span class="ie-tag">IE 2.2.1 · IE 2.2.2 · IE 2.1.4</span>
+  </div>
+
+  <div class="cards">
+    <div class="card" style="grid-column: 1/-1">
+      <h3>📄 PedidoService.java — guardarPedido()</h3>
+<pre><span class="cm">// Estados válidos definidos como Set (búsqueda O(1))</span>
+<span class="kw">private static final</span> <span class="ty">Set</span>&lt;<span class="ty">String</span>&gt; ESTADOS_VALIDOS = Set.<span class="fn">of</span>(
+    <span class="str">"PENDIENTE"</span>, <span class="str">"PROCESADO"</span>, <span class="str">"ENVIADO"</span>, <span class="str">"ENTREGADO"</span>, <span class="str">"CANCELADO"</span>
+);
+
+<span class="kw">public</span> <span class="ty">Pedido</span> <span class="fn">guardarPedido</span>(<span class="ty">Pedido</span> pedido) {
+    <span class="cm">// ① REGLA 1: validar estado antes que todo</span>
+    <span class="kw">if</span> (!ESTADOS_VALIDOS.<span class="fn">contains</span>(pedido.<span class="fn">getEstado</span>().<span class="fn">toUpperCase</span>())) {
+        <span class="kw">throw new</span> <span class="ty">BadRequestException</span>(<span class="str">"Estado inválido: ..."</span>);
+    }
+    <span class="cm">// ② REGLA 2: validar que el cliente existe (llama a ms-clientes)</span>
+    <span class="ty">ClienteDTO</span> cliente = clienteService.<span class="fn">obtenerClientePorId</span>(pedido.<span class="fn">getClienteId</span>());
+    <span class="kw">if</span> (cliente == <span class="kw">null</span> || cliente.<span class="fn">getId</span>() == <span class="kw">null</span>) {
+        <span class="kw">throw new</span> <span class="ty">BadRequestException</span>(<span class="str">"Cliente no válido"</span>);
+    }
+    <span class="cm">// ③ Normalizar + guardar</span>
+    pedido.<span class="fn">setEstado</span>(pedido.<span class="fn">getEstado</span>().<span class="fn">toUpperCase</span>()); <span class="cm">// "pendiente" → "PENDIENTE"</span>
+    pedido.<span class="fn">setFechaCreacion</span>(<span class="ty">LocalDateTime</span>.<span class="fn">now</span>());
+    <span class="kw">return</span> pedidoRepository.<span class="fn">save</span>(pedido);
+}</pre>
+    </div>
+    <div class="card">
+      <h3>🔧 Cambio en vivo que el profe puede pedir</h3>
+      <p style="margin-bottom:0.6rem">Agregar regla de monto mínimo:</p>
+      <pre><span class="cm">// Agregar ANTES del save:</span>
+<span class="kw">if</span> (pedido.<span class="fn">getMonto</span>()
+    .<span class="fn">compareTo</span>(<span class="ty">BigDecimal</span>.<span class="fn">valueOf</span>(<span class="nb">1000</span>)) &lt; <span class="nb">0</span>) {
+    <span class="kw">throw new</span> <span class="ty">BadRequestException</span>(
+        <span class="str">"El monto mínimo es $1.000"</span>
+    );
+}</pre>
+    </div>
+    <div class="card">
+      <h3>📊 Flujo de validaciones en orden</h3>
+      <div class="flow-container" style="padding:0.8rem">
+        <div class="flow-step" style="padding:0.5rem 0">
+          <div class="step-num" style="background:rgba(239,68,68,0.2);color:#f87171;width:22px;height:22px;font-size:0.7rem">1</div>
+          <div class="step-content"><div class="step-title" style="font-size:0.78rem">@Valid en Controller</div><div class="step-detail">@NotNull, @NotBlank, @Positive, @Size — Bean Validation</div></div>
+        </div>
+        <div class="flow-step" style="padding:0.5rem 0">
+          <div class="step-num" style="background:rgba(245,158,11,0.2);color:#fbbf24;width:22px;height:22px;font-size:0.7rem">2</div>
+          <div class="step-content"><div class="step-title" style="font-size:0.78rem">Estado válido en Service</div><div class="step-detail">Set.of() — solo PENDIENTE, PROCESADO, ENVIADO, ENTREGADO, CANCELADO</div></div>
+        </div>
+        <div class="flow-step" style="padding:0.5rem 0;border-bottom:none">
+          <div class="step-num" style="background:rgba(16,185,129,0.2);color:#34d399;width:22px;height:22px;font-size:0.7rem">3</div>
+          <div class="step-content"><div class="step-title" style="font-size:0.78rem">Cliente existe (HTTP a ms-clientes)</div><div class="step-detail">WebClient llama a ms-clientes — si no existe → BadRequestException</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- LOGS Y ERRORES -->
+<div class="section reveal" id="logs">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(6,182,212,0.1)">📊</div>
+    <div><h2>Logs y Manejo Global de Excepciones</h2></div>
+    <span class="ie-tag">IE 2.3.1 · IE 2.3.2</span>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h3>📄 GlobalExceptionHandler.java</h3>
+      <pre><span class="an">@RestControllerAdvice</span> <span class="cm">// intercepta TODOS los controllers</span>
+<span class="kw">public class</span> <span class="ty">GlobalExceptionHandler</span> {
+
+    <span class="kw">private static final</span> <span class="ty">Logger</span> log = ...;
+
+    <span class="an">@ExceptionHandler</span>(<span class="ty">ResourceNotFoundException</span>.class)
+    <span class="kw">public</span> <span class="ty">ResponseEntity</span> <span class="fn">handleNotFound</span>(...) {
+        log.<span class="fn">warn</span>(<span class="str">"[404 NOT FOUND] en {}: {}"</span>, path, msg);
+        <span class="cm">// → JSON: {status:404, error, message, path}</span>
+    }
+
+    <span class="an">@ExceptionHandler</span>(<span class="ty">BadRequestException</span>.class)
+    <span class="kw">public</span> <span class="ty">ResponseEntity</span> <span class="fn">handleBadRequest</span>(...) {
+        log.<span class="fn">warn</span>(<span class="str">"[400 BAD REQUEST] en {}: {}"</span>, path, msg);
+    }
+
+    <span class="an">@ExceptionHandler</span>(<span class="ty">Exception</span>.class)
+    <span class="kw">public</span> <span class="ty">ResponseEntity</span> <span class="fn">handleAll</span>(...) {
+        log.<span class="fn">error</span>(<span class="str">"[500 ERROR] en {}: {}"</span>, path, msg, ex);
+    }
+}</pre>
+    </div>
+    <div class="card">
+      <h3>📋 Logs en consola — Ejemplo real</h3>
+      <pre style="background:#0a1628;font-size:0.72rem">
+<span style="color:#34d399">2026-07-13 19:00:01</span> INFO  <span style="color:#60a5fa">PedidoController</span>
+ - GET /api/pedidos - Listando todos
+
+<span style="color:#fbbf24">2026-07-13 19:00:02</span> WARN  <span style="color:#f87171">GlobalExceptionHandler</span>
+ - [404 NOT FOUND] Recurso no encontrado
+   en /api/pedidos/9999:
+   Pedido no encontrado con ID: 9999
+
+<span style="color:#34d399">2026-07-13 19:00:03</span> INFO  <span style="color:#60a5fa">ClienteService</span>
+ - Cliente obtenido: 1 - Juan Pérez
+
+<span style="color:#f87171">2026-07-13 19:00:04</span> ERROR <span style="color:#f87171">ClienteService</span>
+ - Error al obtener cliente ID 5:
+   Connection refused (ms-clientes)</pre>
+      <div style="margin-top:0.5rem;font-size:0.75rem;color:var(--text-dim)">
+        Ver logs guardados: <code style="color:#34d399;font-family:JetBrains Mono,monospace">tail -f ms-pedidos/logs/ms-pedidos.log</code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- SWAGGER -->
+<div class="section reveal" id="swagger">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(245,158,11,0.1)">📖</div>
+    <div><h2>Swagger UI / OpenAPI</h2></div>
+    <span class="ie-tag">IE 3.2.1 · IE 3.2.2</span>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h3>🔗 URLs</h3>
+      <div style="display:flex;flex-direction:column;gap:0.4rem">
+        <a href="http://localhost:8081/swagger-ui/index.html" target="_blank" class="file-link" style="color:#fbbf24">🌐 Swagger UI → localhost:8081/swagger-ui/index.html</a>
+        <a href="http://localhost:8081/v3/api-docs" target="_blank" class="file-link">📄 OpenAPI JSON → localhost:8081/v3/api-docs</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🎬 Recorrido para el profe</h3>
+      <ol style="padding-left:1.2rem;font-size:0.8rem;color:var(--text-dim);line-height:2">
+        <li>Mostrar título: <em>"QuickOrder - Microservicio de Pedidos"</em></li>
+        <li>Expandir grupo <strong>Autenticación</strong></li>
+        <li>Ejecutar <code>POST /auth/login</code> → copiar token</li>
+        <li>Click en <strong>Authorize</strong> 🔒 → pegar token</li>
+        <li>Ejecutar <code>GET /api/pedidos</code> → mostrar 200</li>
+        <li>Ejecutar <code>GET /api/pedidos/9999</code> → mostrar 404</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>📄 OpenApiConfig.java</h3>
+      <pre><span class="an">@Bean</span>
+<span class="kw">public</span> <span class="ty">OpenAPI</span> <span class="fn">customOpenAPI</span>() {
+  <span class="kw">return new</span> <span class="ty">OpenAPI</span>()
+    .<span class="fn">info</span>(<span class="kw">new</span> <span class="ty">Info</span>()
+      .<span class="fn">title</span>(<span class="str">"QuickOrder - ms-pedidos"</span>)
+      .<span class="fn">version</span>(<span class="str">"1.0.0"</span>)
+      .<span class="fn">description</span>(<span class="str">"API de gestión de pedidos"</span>))
+    .<span class="fn">servers</span>(<span class="ty">List</span>.<span class="fn">of</span>(
+      <span class="kw">new</span> <span class="ty">Server</span>().<span class="fn">url</span>(<span class="str">"http://localhost:8081"</span>)
+                  .<span class="fn">description</span>(<span class="str">"Servidor local"</span>),
+      <span class="kw">new</span> <span class="ty">Server</span>().<span class="fn">url</span>(<span class="str">"http://localhost:8080"</span>)
+                  .<span class="fn">description</span>(<span class="str">"API Gateway"</span>)));
+}</pre>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- TESTS -->
+<div class="section reveal" id="tests">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(16,185,129,0.1)">🧪</div>
+    <div><h2>Tests Unitarios</h2></div>
+    <span class="ie-tag">IE 3.1.1 · IE 3.1.2 (12%)</span>
+  </div>
+
+  <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:8px;padding:0.8rem 1rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.8rem">
+    <span style="font-size:1.3rem">✅</span>
+    <div>
+      <div style="font-weight:700;color:#34d399">18 Tests — BUILD SUCCESS</div>
+      <code style="font-family:JetBrains Mono,monospace;font-size:0.78rem;color:var(--text-dim)">./mvnw test -pl ms-pedidos</code>
+    </div>
+  </div>
+
+  <div class="table-wrap" style="margin-bottom:1.5rem">
+    <table>
+      <tr><th>Archivo</th><th>Tests</th><th>Qué cubre</th></tr>
+      <tr>
+        <td class="url-cell">PedidoServiceTest.java</td>
+        <td><span style="color:#34d399;font-weight:700">14</span></td>
+        <td style="font-size:0.78rem">CRUD completo, reglas de negocio (estado inválido, cliente inválido), normalización</td>
+      </tr>
+      <tr>
+        <td class="url-cell">ClienteServiceTest.java</td>
+        <td><span style="color:#34d399;font-weight:700">3</span></td>
+        <td style="font-size:0.78rem">Llamada exitosa a ms-clientes, fallback cuando ms-clientes falla, preservación del ID</td>
+      </tr>
+      <tr>
+        <td class="url-cell">MsPedidosApplicationTests.java</td>
+        <td><span style="color:#34d399;font-weight:700">1</span></td>
+        <td style="font-size:0.78rem">Carga correcta del contexto Spring Boot</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h3>📐 Estructura de un test — Patrón AAA</h3>
+      <pre><span class="an">@Test</span>
+<span class="an">@DisplayName</span>(<span class="str">"guardarPedido - Camino Feliz"</span>)
+<span class="kw">void</span> <span class="fn">guardarPedido_debeGuardar_cuandoClienteValido</span>() {
+  <span class="cm">// ARRANGE: configurar mocks</span>
+  <span class="fn">when</span>(clienteService.<span class="fn">obtenerClientePorId</span>(<span class="nb">1L</span>))
+    .<span class="fn">thenReturn</span>(clienteEjemplo);
+  <span class="fn">when</span>(pedidoRepository.<span class="fn">save</span>(<span class="fn">any</span>()))
+    .<span class="fn">thenReturn</span>(pedidoEjemplo);
+
+  <span class="cm">// ACT: ejecutar el método real</span>
+  <span class="ty">Pedido</span> resultado = pedidoService
+    .<span class="fn">guardarPedido</span>(pedidoEjemplo);
+
+  <span class="cm">// ASSERT: verificar resultado</span>
+  <span class="fn">assertNotNull</span>(resultado);
+  <span class="fn">verify</span>(pedidoRepository, <span class="fn">times</span>(<span class="nb">1</span>)).<span class="fn">save</span>(<span class="fn">any</span>());
+}</pre>
+    </div>
+    <div class="card">
+      <h3>🔴 Test en vivo (IE 3.1.2 = 12%)</h3>
+      <p style="margin-bottom:0.6rem;color:var(--text-dim)">Pegar esto en PedidoServiceTest.java si el profe pide un test nuevo:</p>
+      <pre><span class="an">@Test</span>
+<span class="an">@DisplayName</span>(<span class="str">"pedidos tienen fechaCreacion"</span>)
+<span class="kw">void</span> <span class="fn">obtenerTodos_debeRetornarPedidosConFecha</span>() {
+  pedidoEjemplo.<span class="fn">setFechaCreacion</span>(
+    <span class="ty">LocalDateTime</span>.<span class="fn">now</span>());
+  <span class="fn">when</span>(pedidoRepository.<span class="fn">findAll</span>())
+    .<span class="fn">thenReturn</span>(<span class="ty">List</span>.<span class="fn">of</span>(pedidoEjemplo));
+
+  <span class="ty">List</span>&lt;<span class="ty">Pedido</span>&gt; resultado =
+    pedidoService.<span class="fn">obtenerTodos</span>();
+
+  <span class="fn">assertNotNull</span>(
+    resultado.<span class="fn">get</span>(<span class="nb">0</span>).<span class="fn">getFechaCreacion</span>(),
+    <span class="str">"Debe tener fecha de creación"</span>);
+}</pre>
+    </div>
+    <div class="card">
+      <h3>💡 Conceptos clave para explicar</h3>
+      <ul>
+        <li style="margin-bottom:0.4rem"><strong>@Mock:</strong> objeto totalmente simulado — no toca BD ni llama servicios reales</li>
+        <li style="margin-bottom:0.4rem"><strong>@InjectMocks:</strong> crea el objeto real e inyecta los @Mock en su constructor</li>
+        <li style="margin-bottom:0.4rem"><strong>@Spy:</strong> objeto real pero permite interceptar métodos específicos</li>
+        <li style="margin-bottom:0.4rem"><strong>when().thenReturn():</strong> define qué devuelve el mock cuando se llama</li>
+        <li><strong>verify():</strong> verifica que el método fue llamado exactamente N veces</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- Q&A -->
+<div class="section reveal" id="preguntas">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(245,158,11,0.1)">❓</div>
+    <div><h2>Preguntas del Profe — Guía de respuestas</h2></div>
+  </div>
+
+  <div class="qa-list">
+    <div class="qa-item">
+      <div class="qa-q">❓ ¿Qué es el patrón CSR?</div>
+      <div class="qa-a"><strong>Controller</strong> recibe la petición HTTP y delega → <strong>Service</strong> tiene la lógica de negocio y las reglas → <strong>Repository</strong> accede a los datos. Cada capa tiene una sola responsabilidad.</div>
+    </div>
+    <div class="qa-item">
+      <div class="qa-q">❓ ¿Por qué WebClient y no RestTemplate?</div>
+      <div class="qa-a"><code>WebClient</code> es el cliente HTTP moderno de Spring 5+. <code>RestTemplate</code> está en modo mantenimiento (deprecated). WebClient soporta programación reactiva y es más eficiente.</div>
+    </div>
+    <div class="qa-item">
+      <div class="qa-q">❓ ¿Qué hace <code>.block()</code>?</div>
+      <div class="qa-a">Convierte la llamada reactiva (asíncrona) en síncrona. La usamos porque el resto del microservicio usa Spring MVC (no WebFlux reactivo completo). En un sistema 100% reactivo no lo necesitaríamos.</div>
+    </div>
+    <div class="qa-item">
+      <div class="qa-q">❓ ¿Qué es un DTO?</div>
+      <div class="qa-a"><strong>Data Transfer Object</strong>: objeto simple para transferir datos entre capas o microservicios, sin exponer directamente la entidad JPA. <code>ClienteDTO</code> no tiene anotaciones <code>@Entity</code> — solo datos.</div>
+    </div>
+    <div class="qa-item">
+      <div class="qa-q">❓ ¿Por qué ms-pedidos tiene su propia copia de ClienteDTO?</div>
+      <div class="qa-a">Principio de <strong>autonomía de microservicios</strong>: cada microservicio es independiente. Si ms-clientes cambia su modelo <code>Cliente</code>, ms-pedidos no se rompe porque tiene su propia copia del DTO.</div>
+    </div>
+    <div class="qa-item">
+      <div class="qa-q">❓ ¿Qué pasa si ms-clientes se cae?</div>
+      <div class="qa-a">Aplicamos el patrón <strong>fallback graceful</strong>: el <code>catch(Exception e)</code> en <code>ClienteService</code> captura el error y devuelve un <code>ClienteDTO</code> con datos por defecto. El sistema sigue operativo, no lanzamos error al usuario.</div>
+    </div>
+    <div class="qa-item">
+      <div class="qa-q">❓ ¿Qué es <code>@RestControllerAdvice</code>?</div>
+      <div class="qa-a">Es un interceptor global de excepciones: captura los errores lanzados en cualquier controller y los convierte en respuestas HTTP estructuradas (JSON con timestamp, status, message, path). Evita duplicar el manejo de errores.</div>
+    </div>
+    <div class="qa-item">
+      <div class="qa-q">❓ ¿Por qué <code>Set.of()</code> para los estados válidos?</div>
+      <div class="qa-a"><code>Set</code> tiene búsqueda <code>O(1)</code> — constante, sin importar cuántos estados haya. <code>contains()</code> en un Set es mucho más eficiente que una cadena de <code>if/else</code> o <code>switch</code>.</div>
+    </div>
+    <div class="qa-item">
+      <div class="qa-q">❓ ¿Cómo funciona el API Gateway?</div>
+      <div class="qa-a">Lee la <code>predicates → Path</code> del <code>application.yml</code>: si la petición llega a <code>/api/pedidos/**</code>, la reenvía al <code>uri: http://localhost:8081</code>. El cliente externo siempre habla con el puerto 8080.</div>
+    </div>
+    <div class="qa-item">
+      <div class="qa-q">❓ ¿Qué diferencia hay entre @Mock y @Spy en los tests?</div>
+      <div class="qa-a"><code>@Mock</code> crea un objeto <strong>totalmente falso</strong> — ningún método hace nada real. <code>@Spy</code> crea el objeto <strong>real</strong> pero permite interceptar métodos específicos con <code>doReturn()</code>.</div>
+    </div>
+    <div class="qa-item">
+      <div class="qa-q">❓ ¿Por qué JpaRepository y no escribir SQL directo?</div>
+      <div class="qa-a">Spring Data JPA genera el SQL automáticamente desde el nombre del método. <code>findByClienteId(Long id)</code> genera <code>SELECT * FROM pedidos WHERE cliente_id = ?</code>. Menos código, menos errores, más mantenible.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- COMANDOS -->
+<div class="section reveal" style="padding-bottom:3rem">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(16,185,129,0.1)">⚡</div>
+    <div><h2>Comandos rápidos de referencia</h2></div>
+  </div>
+  <div class="cmd-grid">
+    <div class="cmd-item">
+      <div class="cmd-label">Correr todos los tests</div>
+      <div class="cmd-code">./mvnw test -pl ms-pedidos</div>
+    </div>
+    <div class="cmd-item">
+      <div class="cmd-label">Levantar ms-pedidos</div>
+      <div class="cmd-code">./mvnw spring-boot:run -pl ms-pedidos</div>
+    </div>
+    <div class="cmd-item">
+      <div class="cmd-label">Levantar ms-clientes</div>
+      <div class="cmd-code">./mvnw spring-boot:run -pl ms-clientes</div>
+    </div>
+    <div class="cmd-item">
+      <div class="cmd-label">Levantar API Gateway</div>
+      <div class="cmd-code">./mvnw spring-boot:run -pl api-gateway</div>
+    </div>
+    <div class="cmd-item">
+      <div class="cmd-label">Ver logs en tiempo real</div>
+      <div class="cmd-code">tail -f ms-pedidos/logs/ms-pedidos.log</div>
+    </div>
+    <div class="cmd-item">
+      <div class="cmd-label">Todo con Docker</div>
+      <div class="cmd-code">docker compose up --build</div>
+    </div>
+    <div class="cmd-item">
+      <div class="cmd-label">Swagger UI</div>
+      <div class="cmd-code">http://localhost:8081/swagger-ui/index.html</div>
+    </div>
+    <div class="cmd-item">
+      <div class="cmd-label">Login → token JWT</div>
+      <div class="cmd-code">POST :8081/auth/login {"username":"admin","password":"1234"}</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.05 });
+  reveals.forEach(r => observer.observe(r));
+</script>
+</body>
+</html>
